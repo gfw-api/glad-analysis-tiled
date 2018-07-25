@@ -1,6 +1,6 @@
 import unittest
 import json
-from ps import app
+from gladAnalysis import app
 import requests
 from httmock import all_requests, response, HTTMock
 
