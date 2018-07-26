@@ -4,50 +4,52 @@ from dateutil.relativedelta import relativedelta
 
 import boto3
 from shapely.geometry import Polygon
-# from gladAnalysis import middleware
-from gladAnalysis.middleware import AthenaWaiter, get_s3_results_in_dict
+from gladAnalysis import middleware
+# from gladAnalysis.middleware import AthenaWaiter, get_s3_results_in_dict
 
 # import AthenaWaiter, get_s3_results_in_dict
+import logging
 
+import sys
 
 class GladPointsGenerator(object):
 
-    def __init__(self, geom_wkt, agg_by, period):
+    def __init__(self, geom_wkt, agg_by=None, period=None, download=None):
         self.geom_wkt = geom_wkt
         self.period = period
         self.agg_by = agg_by
+        self.download = download
         self.bucket = 'gfw2-data'
-        self.folder = 'alerts-tsv/glad_download/'
+        self.folder = 'alerts-tsv/glad_download'
+
+    def bucket_folder(self):
+        print "\n\n Bucket and Folder \n\n"
+        return self.bucket, self.folder
 
     # return sql of Select either a count of alerts, or a count grouped by year and day
     def get_query_string(self):
-
-        if self.period:
-            min_date = self.period.split(',')[0]
-            max_date = self.period.split(',')[-1]
-        else:
-            today = datetime.datetime.now()
-            min_date = (today - relativedelta(years=2)).strftime('%Y-%m-%d')
-            max_date = today.strftime('%Y-%m-%d')
-
-
+        glad_table = 'glad_asia_text'
         if self.agg_by:
 
-            sql = '''SELECT year, julian_day, COUNT(*) AS alert_count '''
-            '''FROM glad_admin '''
-            '''WHERE ST_Intersects(ST_Polygon('{}'), ST_Point(lon, lat)) '''
-            '''GROUP BY year, julian_day'''.format(self.geom_wkt)
+            sql = "SELECT year, julian_day, COUNT(*) AS alert_count " \
+                  "FROM {} " \
+                  "WHERE ST_Intersects(ST_Polygon('{}'), ST_Point(long, lat)) " \
+                  "GROUP BY year, julian_day".format(glad_table, self.geom_wkt)
 
         else:
             sql = '''SELECT '0' as year, '0' as julian_day, COUNT(*) AS alert_count '''
-            '''FROM glad_admin '''
-            '''WHERE ST_Intersects(ST_Polygon('{}'), ST_Point(lon, lat)) '''.format(self.geom_wkt)
+            '''FROM {} '''
+            '''WHERE ST_Intersects(ST_Polygon('{}'), ST_Point(long, lat)) '''.format(glad_table, self.geom_wkt)
 
+        if self.download:
+            sql = "SELECT lat, long FROM {} " \
+                  "WHERE ST_Intersects(ST_Polygon('{}'), ST_Point(long, lat)) ".format(glad_table, self.geom_wkt)
         return sql
 
     # execute the query in athena. saves it to gfw2-data/alerts-tsv/glad_download/
-    # returns the name of the csv (query id). output has 3 columns
+    # returns the name of the csv (query id). output has 3 columns except for csv download queries
     def get_query_id(self):
+
         client = boto3.client(
             'athena',
             region_name='us-east-1'
@@ -90,6 +92,5 @@ class GladPointsGenerator(object):
 
     def generate(self):
         query_id = self.get_query_id()
-
         return self.get_results_df(query_id)
 

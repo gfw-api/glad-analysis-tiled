@@ -1,13 +1,14 @@
 
 import time
 import datetime
+import sys
 
 import boto3
 import botocore
 from botocore.client import Config
 from io import StringIO
 import csv
-
+from utils import util
 
 def get_s3_client():
     return boto3.client(
@@ -17,8 +18,9 @@ def get_s3_client():
     )
 
 
-# put the csv into a dictionary, later will be read into pandas df
+# put the csv into a dictionary
 def get_s3_results_in_dict(key, bucket):
+
     s3_client = get_s3_client()
     data = s3_client.get_object(
         Bucket=bucket,
@@ -33,10 +35,10 @@ def get_s3_results_in_dict(key, bucket):
 
     # skip header row
     next(reader, None)
-
-    alerts_dict = {}
     alerts_list = []
     for row in reader:
+
+        alerts_dict = {}
         alerts_dict['year'] = int(row[0])
         alerts_dict['julian_day'] = int(row[1])
         alerts_dict['alert_count'] = int(row[2])
@@ -45,7 +47,7 @@ def get_s3_results_in_dict(key, bucket):
     return alerts_list
 
 
-def create_resp_dict(alerts_list, period, agg_by=None):
+def create_resp_dict(alerts_list, period=None, agg_by=None):
 
     start = period.split(',')[0]
     end = period.split(',')[1]
@@ -54,27 +56,34 @@ def create_resp_dict(alerts_list, period, agg_by=None):
     end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
 
     # add a real date column and filter for period
-
-    # filtered_by_period = {alert_date: count for alert_date, count in date_dict.iteritems() if
-    #                       start_date <= alert_date <= end_date}
-
     date_formatted_dict = {}
+    date_unformatted_dict = {}
 
     for date_count_dict in alerts_list:
+
+        # get day and year, count
         j_day = date_count_dict['julian_day']
         alert_year = date_count_dict['year']
 
-        date_count_dict['alert_date'] = datetime.datetime(alert_year, 1, 1) + datetime.timedelta(j_day)
-        alert_date = date_count_dict['alert_date']
-        alert_count = date_count_dict['count']
+        # create date by combining julian day and year
+        date_obj = datetime.datetime(alert_year, 1, 1) + datetime.timedelta(j_day)
+
+        # create new key of alert_date
+        date_count_dict['alert_date'] = date_obj
 
         # filter for period
         if start_date <= date_count_dict['alert_date'] <= end_date:
-            date_formatted_dict[alert_date] = date_count_dict[alert_count]
+            date_unformatted_dict[date_obj] = date_count_dict['alert_count']
+            # get the string format of the date
+            date_str = date_obj.strftime('%Y-%m-%d')
+            date_formatted_dict[date_str] = date_count_dict['alert_count']
 
+    if agg_by:
+        date_formatted_dict = util.create_resp_dict(date_unformatted_dict)
+        # get just the requested agg by
+        date_formatted_dict = date_formatted_dict[agg_by]
 
-
-
+    return date_formatted_dict
 
 
 class AthenaWaiterException(Exception):
@@ -98,6 +107,7 @@ class AthenaWaiter(object):
         self.interval = interval
 
     def object_exists(self, bucket='', key=''):
+        # print "\n\nChecking if {0} and {1} exist\n\n".format(bucket, key)
         exists = True
         try:
             self.s3_client.head_object(Bucket=bucket, Key=key)
@@ -120,9 +130,13 @@ class AthenaWaiter(object):
 
     def wait(self, bucket='', key='', query_id=''):
 
+        print '\n\n\nstarting wait!\n\n\n'
+
         success = False
         for _ in range(self.max_tries):
+
             if self.object_exists(bucket=bucket, key=key):
+
                 success = True
                 break
             self.check_status(query_id)
