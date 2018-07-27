@@ -10,6 +10,7 @@ from io import StringIO
 import csv
 from utils import util
 
+
 def get_s3_client():
     return boto3.client(
         's3', 'us-east-1', config=Config(
@@ -129,8 +130,6 @@ class AthenaWaiter(object):
             )
 
     def wait(self, bucket='', key='', query_id=''):
-
-        print '\n\n\nstarting wait!\n\n\n'
 
         success = False
         for _ in range(self.max_tries):
