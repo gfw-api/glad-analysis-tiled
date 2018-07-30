@@ -40,9 +40,10 @@ def point_in_poly_download(geom):
 
 
 def iso_download(iso, adm1_code=None, adm2_code=None, alert_year=None):
+    print 'in analysis_services.iso_download'
     bucket = 'gfw2-data'
 
-    user_period = '2016-12-31,2017-01-03'
+    user_period = '2016-01-01,2016-06-01'
     user_start = user_period.split(',')[0]
     user_end = user_period.split(',')[1]
 

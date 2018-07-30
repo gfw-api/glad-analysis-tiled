@@ -14,6 +14,7 @@ conn = S3Connection()
 
 def download_csv(bucket, path, query_id, start_year, end_year, start_day, end_day, adm1_code=None, adm2_code=None):
     # read and filter a single csv
+    print 'in download_service.download_csv'
 
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)
@@ -23,6 +24,7 @@ def download_csv(bucket, path, query_id, start_year, end_year, start_day, end_da
 
     for line in read_file(key_obj, start_year, end_year, start_day, end_day, adm1_code, adm2_code):
         yield line
+
 
 
 def read_file(f, start_year, end_year, start_day, end_day, adm1_code=None, adm2_code=None):
@@ -51,17 +53,10 @@ def read_file(f, start_year, end_year, start_day, end_day, adm1_code=None, adm2_
 
             # match the line of text with user input
             len_input = len(adm1_adm2)
-
+           
             year = int(split[3])
             day = int(split[4])
-            # if start_year != end_year:
-            #     if (day >= start_day and year == start_year) and (day <= end_day and year == end_year)
-            # period = '2016-12-31,2017-01-03'
             if start_day <= day <= end_day and start_year <= year <= end_year:
                 if adm1_adm2_dict[len_input] == user_dict[len_input]:
-
                     yield line
-
-
-
-
+   
