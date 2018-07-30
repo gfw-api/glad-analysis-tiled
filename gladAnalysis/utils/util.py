@@ -69,3 +69,14 @@ def grouped_and_to_rows(keys, vals, agg_type):
         final_list.append(row)
 
     return final_list
+
+
+def date_to_julian(in_date):
+    fmt = '%Y-%m-%d'
+    in_date_format = datetime.datetime.strptime(in_date, fmt)
+    tt = in_date_format.timetuple()
+    j_day = tt.tm_yday
+
+    year = in_date.split('-')[0]
+
+    return int(year), int(j_day)

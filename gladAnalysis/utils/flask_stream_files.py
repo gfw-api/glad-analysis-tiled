@@ -9,17 +9,18 @@ from boto.s3.connection import S3Connection
 conn = S3Connection()
 
 
-def iter_all_rows(bucket, iso, adm1_code, adm2_code, alert_year):
+import util
+
+
+def iter_all_rows(bucket, start_year, end_year, start_day, end_day, iso, adm1_code, adm2_code):
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)
 
-    #
-    # alert_year = '2017'
     for item in iterate_bucket_items(bucket, iso):
         key_obj = bucket_obj.lookup(item['Key'])
 
         # filter lines then yield them
-        for line in download_service.read_file(key_obj, alert_year, adm1_code, adm2_code):
+        for line in download_service.read_file(key_obj, start_year, end_year, start_day, end_day, adm1_code, adm2_code):
             yield line
 
 
