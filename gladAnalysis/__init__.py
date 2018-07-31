@@ -21,7 +21,7 @@ logging.basicConfig(
 app = Flask(__name__)
 
 # Routing
-app.register_blueprint(glad_analysis_endpoints, url_prefix='/api/v1/glad-alerts')
+app.register_blueprint(glad_analysis_endpoints, url_prefix='/api/v1/glad-alerts-athena')
 
 # CT
 info = load_config_json('register')
