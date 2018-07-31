@@ -35,7 +35,9 @@ def test_bra1():
                 lines = byte.split('\n')
                 unfinished_line = lines.pop()
                 for line in lines:
-                    yield line
+                    yield line + '\n'
+
+            yield unfinished_line
 
     return Response(generate(), mimetype='text/csv')
 
