@@ -14,7 +14,6 @@ conn = S3Connection()
 
 def download_csv(bucket, path, query_id, start_year, end_year, start_day, end_day, adm1_code=None, adm2_code=None):
     # read and filter a single csv
-    print 'in download_service.download_csv'
 
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)

@@ -30,19 +30,12 @@ def glad_download_geom_input():
 
 
 # send ISO, download from s3
-@glad_analysis_endpoints.route('/test/<iso_code>/', methods=['GET'])
-def glad_test(iso_code):
-    return jsonify({'test': iso_code})
-
-
-# send ISO, download from s3
 @glad_analysis_endpoints.route('/download/<iso_code>/', methods=['GET'])
 @glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/', methods=['GET'])
 @glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/<adm2_code>/', methods=['GET'])
 def glad_download_iso_input(iso_code, adm1_code=None, adm2_code=None):
 
     alert_year = request.args.get('year', False)
-    print 'got request for {}, {}, {}'.format(iso_code, adm1_code, adm2_code)
 
     streaming = analysis_services.iso_download(iso_code, adm1_code, adm2_code, alert_year)
 
