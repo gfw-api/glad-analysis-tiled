@@ -5,7 +5,7 @@
 		"method": "GET",
 		"binary": true,
 		"redirect": {
-			"method": "POST",
+			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/download/:iso_code"
 		}
 	},
@@ -14,7 +14,7 @@
 		"method": "GET",
 		"binary": true,
 		"redirect": {
-			"method": "POST",
+			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/download/:iso_code/:adm1_code"
 		}
 	},
@@ -23,7 +23,7 @@
 		"method": "GET",
 		"binary": true,
 		"redirect": {
-			"method": "POST",
+			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/download/:iso_code/:adm1_code/:adm2_code"
 		}
 	}
