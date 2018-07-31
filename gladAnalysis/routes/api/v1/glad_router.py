@@ -39,7 +39,8 @@ def glad_download_iso_input(iso_code, adm1_code=None, adm2_code=None):
 
     def generate():
         for row in streaming:
-            yield row + '\n'
+            if row:
+	        yield row + '\n'
 
     return Response(generate(), mimetype='text/csv')
 
