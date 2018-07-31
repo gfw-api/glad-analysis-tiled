@@ -1,6 +1,4 @@
 test:
-  env_file:
-    - test.env
   extends:
     file: base.yml
     service: base
