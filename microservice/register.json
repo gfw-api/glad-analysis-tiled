@@ -1,7 +1,7 @@
 {
 	"name": "#(service.name)",
 	"endpoints": [{
-		"path": "/v1/glad-alerts",
+		"path": "/v1/glad-alerts-athena",
 		"method": "GET",
 		"binary": true,
 		"redirect": {
