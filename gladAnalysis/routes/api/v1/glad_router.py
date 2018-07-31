@@ -3,6 +3,9 @@
 import sys
 from flask import jsonify, Blueprint, request, Response
 
+# CCH temp
+from boto.s3.connection import S3Connection
+
 
 from gladAnalysis.services import analysis_services, download_service, athena_query_services
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
@@ -15,6 +18,26 @@ def glad_stats():
     summary_stats = analysis_services.point_in_poly_stats(geojson, 'week', '2017-01-01,2017-06-01')
     return jsonify(summary_stats)
 
+
+# temporary test endpoint to try out downloading just BRA_1.csv
+@glad_analysis_endpoints.route('/test', methods=['GET'])
+def test_bra1():
+
+    # https://stackoverflow.com/a/16890018
+    s3_conn = S3Connection() 
+    bucket_obj = s3_conn.get_bucket('gfw2-data')
+
+    def generate():
+        for f in bucket_obj.list(prefix='alerts-tsv/temp/glad-by-state/BRA/BRA_1.csv'):
+            unfinished_line = ''
+            for byte in f:
+                byte = unfinished_line + byte
+                lines = byte.split('\n')
+                unfinished_line = lines.pop()
+                for line in lines:
+                    yield line
+
+    return Response(generate(), mimetype='text/csv')
 
 # send geom, get download
 @glad_analysis_endpoints.route('/from_geom.csv', methods=['POST'])
