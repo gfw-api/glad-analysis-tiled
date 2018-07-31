@@ -2,7 +2,7 @@ import athena_query_services
 from gladAnalysis import middleware
 from gladAnalysis.utils import util, flask_stream_files
 import download_service
-import sys
+import datetime
 
 
 def point_in_poly_stats(geom, agg_by, period):
@@ -39,10 +39,14 @@ def point_in_poly_download(geom):
     return download_service.download_csv(bucket, folder, query_id, start_year, end_year, start_day, end_day)
 
 
-def iso_download(iso, adm1_code=None, adm2_code=None, alert_year=None):
+def iso_download(request, iso, adm1_code=None, adm2_code=None):
     bucket = 'gfw2-data'
 
-    user_period = '2016-01-01,2016-06-01'
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    user_period = request.args.get('period', '2015-01-01,{}'.format(today))
+
+    print user_period
+    # user_period = '2016-01-01,2016-06-01'
     user_start = user_period.split(',')[0]
     user_end = user_period.split(',')[1]
 

@@ -25,7 +25,6 @@ def download_csv(bucket, path, query_id, start_year, end_year, start_day, end_da
         yield line
 
 
-
 def read_file(f, start_year, end_year, start_day, end_day, adm1_code=None, adm2_code=None):
     unfinished_line = ''
 
@@ -55,7 +54,12 @@ def read_file(f, start_year, end_year, start_day, end_day, adm1_code=None, adm2_
            
             year = int(split[3])
             day = int(split[4])
-            if start_day <= day <= end_day and start_year <= year <= end_year:
+
+            full_yrs = []
+            for yr in range(start_year + 1, end_year):
+                full_yrs.append(yr)
+
+            if year in full_yrs or (day >= start_day and year == start_year) or (day <= end_day and year == end_year):
                 if adm1_adm2_dict[len_input] == user_dict[len_input]:
                     yield line
    

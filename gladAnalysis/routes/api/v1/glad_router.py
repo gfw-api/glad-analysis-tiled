@@ -35,9 +35,7 @@ def glad_download_geom_input():
 @glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/<adm2_code>/', methods=['GET'])
 def glad_download_iso_input(iso_code, adm1_code=None, adm2_code=None):
 
-    alert_year = request.args.get('year', False)
-
-    streaming = analysis_services.iso_download(iso_code, adm1_code, adm2_code, alert_year)
+    streaming = analysis_services.iso_download(request, iso_code, adm1_code, adm2_code)
 
     def generate():
         for row in streaming:

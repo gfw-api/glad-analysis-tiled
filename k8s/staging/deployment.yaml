@@ -35,11 +35,16 @@ spec:
                 secretKeyRef:
                   name: mssecrets
                   key: CT_URL
-          - name: CT_TOKEN
+          - name: AWS_ACCESS_KEY_ID
             valueFrom:
                 secretKeyRef:
                   name: mssecrets
-                  key: CT_TOKEN
+                  key: GLAD_ANALYSIS_AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: GLAD_ANALYSIS_AWS_SECRET_ACCESS_KEY
           - name: CT_REGISTER_MODE
             valueFrom:
                 secretKeyRef:
