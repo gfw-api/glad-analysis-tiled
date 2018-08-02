@@ -3,8 +3,12 @@
 import sys
 import inspect
 from flask import jsonify, Blueprint, request, Response
+
 from CTRegisterMicroserviceFlask import request_to_microservice
 import json
+
+from boto.s3.connection import S3Connection
+
 from gladAnalysis.services import analysis_services, download_service, athena_query_services
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 from gladAnalysis.utils import util
@@ -53,7 +57,8 @@ def glad_download_iso_input(iso_code, adm1_code=None, adm2_code=None):
 
     def generate():
         for row in streaming:
-            yield row + '\n'
+            if row:
+                yield row + '\n'
 
     return Response(generate(), mimetype='text/csv')
 
