@@ -20,11 +20,8 @@ logging.basicConfig(
 # Flask App
 app = Flask(__name__)
 
-# allow urls to end with slash or not
-app.url_map.strict_slashes = False
-
 # Routing
-app.register_blueprint(glad_analysis_endpoints, url_prefix='/api/v1/glad-alerts-athena')
+app.register_blueprint(glad_analysis_endpoints, url_prefix='/api/v1/glad-alerts')
 
 # CT
 info = load_config_json('register')

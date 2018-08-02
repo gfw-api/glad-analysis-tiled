@@ -6,6 +6,8 @@ from shapely.ops import transform
 
 from shapely.geometry import shape
 
+from CTRegisterMicroserviceFlask import request_to_microservice
+
 
 def get_shapely_geom(geojson):
     # geojson = geom['geojson']
@@ -80,3 +82,55 @@ def date_to_julian(in_date):
     year = in_date.split('-')[0]
 
     return int(year), int(j_day)
+
+
+def get_query_params(request):
+    # possible params: gladConfirmedOnly, aggregate_values, aggregate_by
+    agg_values = request.args.get('aggregate_values', False)
+    agg_by = request.args.get('aggregate_by', None)
+    confidence = request.args.get('gladConfirmedOnly', False)
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    period = request.args.get('period', '2001-01-01,{}'.format(today))
+
+    query_params = 'aggregate_values={}&aggregate_by={}&gladConfirmedOnly={}&period={}'.format(agg_values, agg_by,
+                                                                                               confidence, period)
+
+    return query_params
+
+
+def route_constructor(iso_code, adm1_code=None, adm2_code=None):
+    route = iso_code
+    if adm1_code:
+        route += '/{}'.format(adm1_code)
+        if adm2_code:
+            route += '/{}'.format(adm2_code)
+
+    return route
+
+
+def query_microservice(uri):
+
+    config_alerts = {
+        'uri': uri,
+        'method': 'GET'
+    }
+
+    return request_to_microservice(config_alerts)
+
+
+def format_alerts(request, glad_alerts):
+    # take the glad alerts format and strip out some attributes
+    agg_by = request.args.get('aggregate_by', None)
+
+    formatted_alerts = []
+    for d in glad_alerts:
+        alerts_dict = {}
+        alerts_dict['count'] = d['alerts']
+        alerts_dict['year'] = d['year']
+        if agg_by:
+            alerts_dict[agg_by] = d[agg_by]
+
+        formatted_alerts.append(alerts_dict)
+
+    return formatted_alerts
+

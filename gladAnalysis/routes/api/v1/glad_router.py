@@ -1,19 +1,33 @@
 """API ROUTER"""
 
 import sys
+import inspect
 from flask import jsonify, Blueprint, request, Response
-
-
+from CTRegisterMicroserviceFlask import request_to_microservice
+import json
 from gladAnalysis.services import analysis_services, download_service, athena_query_services
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
+from gladAnalysis.utils import util
+from gladAnalysis.serializers import serialize_response
 
 
-@glad_analysis_endpoints.route('/', methods=['POST'])
-def glad_stats():
-    geojson = request.get_json().get('geojson', None) if request.get_json() else None
+@glad_analysis_endpoints.route('/admin/<iso_code>', methods=['GET'])
+@glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>', methods=['GET'])
+@glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>/<adm2_code>', methods=['GET'])
+def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 
-    summary_stats = analysis_services.point_in_poly_stats(geojson, 'week', '2017-01-01,2017-06-01')
-    return jsonify(summary_stats)
+    # Query glad-alerts/summary-stats
+    query_params = util.get_query_params(request)
+    route = util.route_constructor(iso_code, adm1_code, adm2_code)
+    alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, query_params)
+    area_uri = '/geostore/admin/{}'.format(route)
+
+    glad_alerts = util.query_microservice(alerts_uri)['data']['attributes']['value']
+    glad_area = util.query_microservice(area_uri)['data']['attributes']['areaHa']
+    formatted_glad = util.format_alerts(request, glad_alerts)
+    # format glad alerts to be "count": 4, "week": 5, "year": 2017, etc
+    response = serialize_response(request, formatted_glad, glad_area)
+    return jsonify(response)
 
 
 # send geom, get download
@@ -30,9 +44,9 @@ def glad_download_geom_input():
 
 
 # send ISO, download from s3
-@glad_analysis_endpoints.route('/download/<iso_code>', methods=['GET'])
-@glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>', methods=['GET'])
-@glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/<adm2_code>', methods=['GET'])
+@glad_analysis_endpoints.route('/download/<iso_code>/', methods=['GET'])
+@glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/', methods=['GET'])
+@glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/<adm2_code>/', methods=['GET'])
 def glad_download_iso_input(iso_code, adm1_code=None, adm2_code=None):
 
     streaming = analysis_services.iso_download(request, iso_code, adm1_code, adm2_code)
