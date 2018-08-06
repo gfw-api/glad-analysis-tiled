@@ -25,7 +25,16 @@
 			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/admin/:iso_code/:adm1_code/:adm2_code"
 		}
-	}
+	},
+		{
+		"path": "/v1/glad-alerts-athena/download",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/glad-alerts-athena/download"
+		}
+        }
 
 	]
 }
