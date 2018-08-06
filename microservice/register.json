@@ -1,38 +1,29 @@
 {
 	"name": "#(service.name)",
 	"endpoints": [{
-		"path": "/v1/glad-alerts/admin/:iso_code",
+		"path": "/v1/glad-alerts-athena/admin/:iso_code",
 		"method": "GET",
 		"binary": true,
 		"redirect": {
 			"method": "GET",
-			"path": "/api/v1/glad-alerts/admin/:iso_code"
+			"path": "/api/v1/glad-alerts-athena/admin/:iso_code"
 		}
 	}, {
-		"path": "/v1/glad-alerts/admin/:iso_code/:adm1_code",
+		"path": "/v1/glad-alerts-athena/admin/:iso_code/:adm1_code",
 		"method": "GET",
 		"binary": true,
 		"redirect": {
 			"method": "GET",
-			"path": "/api/v1/glad-alerts/admin/:iso_code/:adm1_code"
+			"path": "/api/v1/glad-alerts-athena/admin/:iso_code/:adm1_code"
 		}
 	},
 		{
-		"path": "/v1/glad-alerts/admin/:iso_code/:adm1_code/:adm2_code",
+		"path": "/v1/glad-alerts-athena/admin/:iso_code/:adm1_code/:adm2_code",
 		"method": "GET",
 		"binary": true,
 		"redirect": {
 			"method": "GET",
-			"path": "/api/v1/glad-alerts/admin/:iso_code/:adm1_code/:adm2_code"
-		}
-	},
-			{
-		"path": "/v1/glad-alerts-athena/test",
-		"method": "GET",
-		"binary": true,
-		"redirect": {
-			"method": "GET",
-			"path": "/api/v1/glad-alerts-athena/test"
+			"path": "/api/v1/glad-alerts-athena/admin/:iso_code/:adm1_code/:adm2_code"
 		}
 	}
 

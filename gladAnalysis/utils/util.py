@@ -123,7 +123,7 @@ def format_alerts(request, glad_alerts):
     agg_by = request.args.get('aggregate_by', None)
 
     formatted_alerts = []
-    for d in glad_alerts:
+    for d in glad_alerts['data']['attributes']['value']:
         alerts_dict = {}
         alerts_dict['count'] = d['alerts']
         alerts_dict['year'] = d['year']
