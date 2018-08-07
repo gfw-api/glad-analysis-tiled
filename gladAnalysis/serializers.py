@@ -20,7 +20,7 @@ def serialize_response(request, glad_alerts, glad_area):
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', None)
     today = datetime.datetime.today().strftime('%Y-%m-%d')
-    period = request.args.get('period', '2001-01-01,{}'.format(today))
+    period = request.args.get('period', '2015-01-01,{}'.format(today))
 
     serialized_resopnse = {
         "data": {

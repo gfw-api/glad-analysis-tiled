@@ -32,7 +32,9 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     logging.info("AREA URI: {}".format(area_uri))
     logging.info(os.environ.get('API_VERSION'))
     logging.info(os.environ.get('CT_URL'))
+
     glad_alerts = util.query_microservice(alerts_uri)
+
 
     glad_area = util.query_microservice(area_uri)['data']['attributes']['areaHa']
 
