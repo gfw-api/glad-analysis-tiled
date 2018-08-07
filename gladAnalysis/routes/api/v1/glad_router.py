@@ -2,6 +2,7 @@
 
 import sys
 import inspect
+import os
 import logging
 from flask import jsonify, Blueprint, request, Response
 
@@ -29,6 +30,7 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 
     logging.info("ALERTS URI: {}".format(alerts_uri))
     logging.info("AREA URI: {}".format(area_uri))
+    logging.info(os.environ.get('API_VERSION'))
     glad_alerts = util.query_microservice(alerts_uri)
 
     glad_area = util.query_microservice(area_uri)['data']['attributes']['areaHa']
