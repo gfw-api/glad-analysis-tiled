@@ -26,6 +26,8 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, query_params)
     area_uri = '/geostore/admin/{}'.format(route)
 
+    print "ALERTS URI: {}".format(alerts_uri)
+    print "AREA URI: {}".format(area_uri)
     glad_alerts = util.query_microservice(alerts_uri)
 
     glad_area = util.query_microservice(area_uri)['data']['attributes']['areaHa']
