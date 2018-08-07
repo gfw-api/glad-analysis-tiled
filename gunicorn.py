@@ -4,7 +4,7 @@ import multiprocessing
 bind = '0.0.0.0:5702'
 backlog = 2048
 
-worker_class = 'async'
+worker_class = 'gevent'
 workers = 2
 threads = 1
 worker_connections = 1000
