@@ -85,15 +85,15 @@ def date_to_julian(in_date):
 
 
 def get_query_params(request):
-    # possible params: gladConfirmedOnly, aggregate_values, aggregate_by
+    # possible params: gladConfirmOnly, aggregate_values, aggregate_by
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', None)
-    confidence = request.args.get('gladConfirmedOnly', False)
+    confidence = request.args.get('gladConfirmOnly', False)
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     period = request.args.get('period', '2001-01-01,{}'.format(today))
-
-    query_params = 'aggregate_values={}&aggregate_by={}&gladConfirmedOnly={}&period={}'.format(agg_values, agg_by,
-                                                                                               confidence, period)
+    query_params = 'gladConfirmOnly={}&period={}'.format(confidence, period)
+    if agg_values:
+        query_params += '&aggregate_values={}&aggregate_by={}'.format(agg_values, agg_by)
 
     return query_params
 
@@ -112,7 +112,8 @@ def query_microservice(uri):
 
     config_alerts = {
         'uri': uri,
-        'method': 'GET'
+        'method': 'GET',
+        'ignore_version': True
     }
 
     return request_to_microservice(config_alerts)
@@ -121,18 +122,23 @@ def query_microservice(uri):
 def format_alerts(request, glad_alerts):
     # take the glad alerts format and strip out some attributes
     agg_by = request.args.get('aggregate_by', None)
+    print glad_alerts
 
-    formatted_alerts = []
-    for d in glad_alerts['data']['attributes']['value']:
-        alerts_dict = {}
-        alerts_dict['count'] = d['alerts']
-        alerts_dict['year'] = d['year']
-        if agg_by:
-            alerts_dict[agg_by] = d[agg_by]
+    if len(glad_alerts['data']['attributes']['value']) == 1:
+        return glad_alerts['data']['attributes']['value'][0]['alerts']
+    else:
+        formatted_alerts = []
+        for d in glad_alerts['data']['attributes']['value']:
 
-        formatted_alerts.append(alerts_dict)
+            alerts_dict = {}
+            alerts_dict['count'] = d['alerts']
 
-    return formatted_alerts
+            if agg_by:
+                alerts_dict[agg_by] = d[agg_by]
+
+            formatted_alerts.append(alerts_dict)
+
+        return formatted_alerts
 
 
 def row_list_to_json(row_list, period=None, confirm_only=False):

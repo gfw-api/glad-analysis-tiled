@@ -35,6 +35,11 @@ spec:
                 secretKeyRef:
                   name: mssecrets
                   key: CT_URL
+          - name: CT_TOKEN
+            valueFrom:
+                secretKeyRef:
+                  name: mssecrets
+                  key: CT_TOKEN
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
                 secretKeyRef:
