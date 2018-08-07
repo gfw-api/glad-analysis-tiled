@@ -7,7 +7,7 @@ import logging
 from flask import Flask
 from gladAnalysis.config import SETTINGS
 from gladAnalysis.routes.api import error
-from gladAnalysis.routes.api.v1 import glad_analysis_endpoints
+from gladAnalysis.routes.api.v1 import glad_analysis_endpoints, custom_geom_endpoints
 from gladAnalysis.utils.files import load_config_json
 import CTRegisterMicroserviceFlask
 
@@ -21,7 +21,10 @@ logging.basicConfig(
 app = Flask(__name__)
 
 # Routing
+app.url_map.strict_slashes = False
 app.register_blueprint(glad_analysis_endpoints, url_prefix='/api/v1/glad-alerts-athena')
+app.register_blueprint(custom_geom_endpoints, url_prefix='/api/v1/glad-alerts-athena')
+
 
 # CT
 info = load_config_json('register')

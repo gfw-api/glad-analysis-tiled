@@ -1,20 +1,11 @@
 """API ROUTER"""
-
-import sys
-import inspect
-import os
-import logging
 from flask import jsonify, Blueprint, request, Response
-
-from CTRegisterMicroserviceFlask import request_to_microservice
-import json
-
 from boto.s3.connection import S3Connection
 
-from gladAnalysis.services import analysis_services, download_service, athena_query_services
-glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 from gladAnalysis.utils import util
 from gladAnalysis.serializers import serialize_response
+
+glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 
 
 @glad_analysis_endpoints.route('/admin/<iso_code>', methods=['GET'])
@@ -27,12 +18,6 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 
     alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, query_params)
     area_uri = '/geostore/admin/{}'.format(route)
-
-    logging.info("ALERTS URI: {}".format(alerts_uri))
-    logging.info("AREA URI: {}".format(area_uri))
-    logging.info(os.environ.get('API_VERSION'))
-    logging.info(os.environ.get('CT_URL'))
-
     glad_alerts = util.query_microservice(alerts_uri)
 
 
@@ -44,25 +29,12 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     return jsonify(response)
 
 
-# send geom, get download
-@glad_analysis_endpoints.route('/from_geom.csv', methods=['POST'])
-def glad_download_geom_input():
-    geojson = request.get_json().get('geojson', None) if request.get_json() else None
-    streaming = analysis_services.point_in_poly_download(geojson)
-
-    def generate():
-        for row in streaming:
-            yield row + '\n'
-
-    return Response(generate(), mimetype='text/csv')
-
-
-# send ISO, download from s3
-@glad_analysis_endpoints.route('/download', methods=['GET'])
+# test iso download - need to flesh this out further
+@glad_analysis_endpoints.route('/test.csv', methods=['GET'])
 def test_bra1():
 
     # https://stackoverflow.com/a/16890018
-    s3_conn = S3Connection() 
+    s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket('gfw2-data')
 
     def generate():
@@ -78,4 +50,3 @@ def test_bra1():
             yield unfinished_line
 
     return Response(generate(), mimetype='text/csv')
-
