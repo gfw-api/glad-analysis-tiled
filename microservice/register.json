@@ -28,13 +28,30 @@
 	},
 		{
 		"path": "/v1/glad-alerts-athena/download",
+		"method": "POST",
+		"binary": true,
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/glad-alerts-athena/download"
+		}
+	},
+		{
+		"path": "/v1/glad-alerts-athena/",
+		"method": "POST",
+		"binary": true,
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/glad-alerts-athena/"
+		}
+	},
+		{
+		"path": "/v1/glad-alerts-athena/test.csv",
 		"method": "GET",
 		"binary": true,
 		"redirect": {
 			"method": "GET",
-			"path": "/api/v1/glad-alerts-athena/download"
+			"path": "/api/v1/glad-alerts-athena/test.csv"
 		}
-        }
-
+			}
 	]
 }

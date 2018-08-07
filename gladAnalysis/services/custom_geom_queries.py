@@ -3,6 +3,7 @@ import json
 import sqlite3
 
 import requests
+from flask import request
 from shapely.geometry import shape
 
 from gladAnalysis.utils import tile_geometry, sqlite_util, util, geom_to_db
@@ -46,8 +47,8 @@ def calc_stats(geojson):
         print 'geometry has >5% of area in intersecting tiles, trying lambda endpoint'
         url = 'https://3bkj4476d9.execute-api.us-east-1.amazonaws.com/dev/glad-alerts'
         headers = {"Content-Type": "application/json"}
-        payload = json.dumps({'geojson': {'type': 'FeatureCollection', 'features': [geojson[0]]}})
+        payload = json.dumps({'geojson': {'type': 'FeatureCollection', 'features': [geojson['features'][0]]}})
 
-        r = requests.post(url, data=payload, headers=headers)
+        r = requests.post(url, data=payload, headers=headers, params=request.args.to_dict())
 
         return r.json()
