@@ -24,8 +24,8 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     query_params = util.get_query_params(request)
     route = util.route_constructor(iso_code, adm1_code, adm2_code)
 
-    alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, query_params)
-    area_uri = '/geostore/admin/{}'.format(route)
+    alerts_uri = 'glad-alerts/summary-stats/admin/{}?{}'.format(route, query_params)
+    area_uri = 'geostore/admin/{}'.format(route)
 
     logging.info("ALERTS URI: {}".format(alerts_uri))
     logging.info("AREA URI: {}".format(area_uri))
