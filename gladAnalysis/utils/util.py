@@ -85,13 +85,13 @@ def date_to_julian(in_date):
 
 
 def get_query_params(request):
-    # possible params: gladConfirmedOnly, aggregate_values, aggregate_by
+    # possible params: gladConfirmOnly, aggregate_values, aggregate_by
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', None)
-    confidence = request.args.get('gladConfirmedOnly', False)
+    confidence = request.args.get('gladConfirmOnly', False)
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     period = request.args.get('period', '2001-01-01,{}'.format(today))
-    query_params = 'gladConfirmedOnly={}&period={}'.format(confidence, period)
+    query_params = 'gladConfirmOnly={}&period={}'.format(confidence, period)
     if agg_values:
         query_params += '&aggregate_values={}&aggregate_by={}'.format(agg_values, agg_by)
 

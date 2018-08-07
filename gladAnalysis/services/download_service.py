@@ -35,7 +35,7 @@ def read_file(f, start_year, end_year, start_day, end_day, adm1_code=None, adm2_
         unfinished_line = lines.pop()
         for line in lines:
 
-            # -71.062875,-8.051875,3,2015,216,BRA,1,21,confirmed
+            # -71.062875,-8.051875,3,2015,216,BRA,1,21,confirm
             # filter output
             split = line.split(",")
 
