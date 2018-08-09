@@ -9,6 +9,7 @@ from gladAnalysis.utils import util
 
 custom_geom_endpoints = Blueprint('custom_geom_endpoints', __name__)
 
+
 @custom_geom_endpoints.route('/', methods=['POST'])
 def custom_stats():
 
@@ -16,7 +17,7 @@ def custom_stats():
 
     geojson = request.get_json().get('geojson', None) if request.get_json() else None
 
-    resp = custom_geom_queries.calc_stats(geojson)
+    resp = custom_geom_queries.calc_stats(geojson, request)
 
     return jsonify(resp)
 

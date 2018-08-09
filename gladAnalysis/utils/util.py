@@ -164,3 +164,34 @@ def row_list_to_json(row_list, period=None, confirm_only=False):
 
     # convert all to int
     return dict((x, int(y)) for x, y in final_date_dict.items())
+
+
+def filter_alerts(alert_date_dict, request):
+
+    confidence_param = request.args.get('gladConfirmOnly', False)
+
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    period = request.args.get('period', '2001-01-01,{}'.format(today))
+
+    start_date = period.split(',')[0]
+    end_date = period.split(',')[1]
+
+    start_date_obj = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date_obj = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+    filtered_dict = {}
+    for key, val in alert_date_dict.iteritems():
+
+        alert_date = key.split("::")[0]
+        alert_date_obj = datetime.datetime.strptime(alert_date, '%Y-%m-%d')
+        confidence = str(key.split("::")[1])
+
+        if confidence_param == 'True': ## filter to just get conf=3
+            if start_date_obj <= alert_date_obj <= end_date_obj and confidence == '3':
+                filtered_dict[alert_date_obj] = val
+
+        else:
+            if start_date_obj <= alert_date_obj <= end_date_obj:
+                filtered_dict[alert_date_obj] = val
+
+    return filtered_dict

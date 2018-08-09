@@ -10,6 +10,8 @@ from io import StringIO
 import csv
 from utils import util
 
+from gladAnalysis.serializers import serialize_response
+
 
 def get_s3_client():
     return boto3.client(
@@ -46,6 +48,24 @@ def get_s3_results_in_dict(key, bucket):
         alerts_list.append(alerts_dict)
 
     return alerts_list
+
+
+def format_alerts_custom_geom(alert_date_dict, request, geom_area_ha=None):
+    agg_by = request.args.get('aggregate_by', None)
+    # filter alerts
+    alerts_filtered = util.filter_alerts(alert_date_dict, request)
+
+    # create dictionary of agg by day, week, month, etc
+    grouped = util.create_resp_dict(alerts_filtered)
+
+    # get the agg by value
+    if agg_by:
+        final_vals = grouped[agg_by]
+
+    else:
+        final_vals = grouped['total']
+
+    return serialize_response(request, final_vals, geom_area_ha)
 
 
 def create_resp_dict(alerts_list, period=None, agg_by=None):

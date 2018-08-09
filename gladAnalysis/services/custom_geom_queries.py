@@ -7,9 +7,11 @@ from flask import request
 from shapely.geometry import shape
 
 from gladAnalysis.utils import tile_geometry, sqlite_util, util, geom_to_db
+from gladAnalysis import middleware
+from gladAnalysis.serializers import serialize_response
 
 
-def calc_stats(geojson):
+def calc_stats(geojson, request):
 
     geom = shape(geojson['features'][0]['geometry'])
     geom_area_ha = tile_geometry.calc_area(geom, proj='aea')
@@ -39,7 +41,7 @@ def calc_stats(geojson):
         alert_date_dict = util.row_list_to_json(rows)
 
         if alert_date_dict:
-            return alert_date_dict
+            return middleware.format_alerts_custom_geom(alert_date_dict, request, geom_area_ha)
         else:
             return {}
 
@@ -51,4 +53,13 @@ def calc_stats(geojson):
 
         r = requests.post(url, data=payload, headers=headers, params=request.args.to_dict())
 
-        return r.json()
+        response_dict = r.json()
+        print type(response_dict)
+
+        alerts_dict = response_dict['data']['attributes']['value']
+        geom_area = response_dict['data']['attributes']['area_ha']
+
+        # #serialize response
+        serialized = serialize_response(request, alerts_dict, geom_area)
+        print serialized
+        return serialized

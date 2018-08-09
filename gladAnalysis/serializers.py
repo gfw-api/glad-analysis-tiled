@@ -16,17 +16,17 @@ def serialize_greeting(greeting):
     }
 
 
-def serialize_response(request, glad_alerts, glad_area):
+def serialize_response(request, glad_alerts, glad_area=None):
+
     agg_values = request.args.get('aggregate_values', False)
-    agg_by = request.args.get('aggregate_by', None)
+    agg_by = request.args.get('aggregate_by', False)
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     period = request.args.get('period', '2015-01-01,{}'.format(today))
-
-    serialized_resopnse = {
+    conf = request.args.get('gladConfirmOnly', False)
+    serialized_response = {
         "data": {
         "attributes": {
-                        "areaHa": glad_area,
-                        "downloadUrls": {"csv": "/download/db3", "json": "/download/db34c2"},
+                        "downloadUrls": {"csv": None, "json": None},
                         "value": glad_alerts
                         },
         "id": '20892bc2-5601-424d-8a4a-605c319418a2',
@@ -36,9 +36,13 @@ def serialize_response(request, glad_alerts, glad_area):
         }
 
     if agg_values:
-        serialized_resopnse['data']['aggregate_by'] = agg_by
-        serialized_resopnse['data']['aggregate_values'] = True
+        serialized_response['data']['aggregate_by'] = agg_by
+        serialized_response['data']['aggregate_values'] = True
 
+    if glad_area:
+        serialized_response['data']['attributes']['areaHa'] = glad_area
 
-    return serialized_resopnse
-
+    if conf == 'True':
+        conf = True
+    serialized_response['data']['gladConfirmOnly'] = conf
+    return serialized_response
