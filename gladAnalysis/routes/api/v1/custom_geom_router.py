@@ -10,14 +10,24 @@ from gladAnalysis.utils import util
 custom_geom_endpoints = Blueprint('custom_geom_endpoints', __name__)
 
 
-@custom_geom_endpoints.route('/', methods=['POST'])
+@custom_geom_endpoints.route('/', methods=['GET', 'POST'])
 def custom_stats():
+    print 'in custom stats'
 
-    query_params = util.get_query_params(request)
+    if request.method == 'GET':
+        geostore_id = request.args.get('geostore', None)
 
-    geojson = request.get_json().get('geojson', None) if request.get_json() else None
+        geostore_uri = '/geostore/{}'.format(geostore_id)
 
-    resp = custom_geom_queries.calc_stats(geojson, request)
+        geojson = util.query_microservice(geostore_uri)
+        
+        resp = geojson
+
+    else:
+
+        geojson = request.get_json().get('geojson', None) if request.get_json() else None
+
+        resp = custom_geom_queries.calc_stats(geojson, request)
 
     return jsonify(resp)
 

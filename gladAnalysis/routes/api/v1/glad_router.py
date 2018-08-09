@@ -12,7 +12,7 @@ glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>', methods=['GET'])
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>/<adm2_code>', methods=['GET'])
 def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
-    
+
     # Query glad-alerts/summary-stats
     query_params = util.get_query_params(request)
     route = util.route_constructor(iso_code, adm1_code, adm2_code)
