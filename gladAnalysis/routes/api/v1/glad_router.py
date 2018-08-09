@@ -4,6 +4,7 @@ from boto.s3.connection import S3Connection
 
 from gladAnalysis.utils import util
 from gladAnalysis.serializers import serialize_response
+from gladAnalysis.services import download_service
 
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 
@@ -49,5 +50,21 @@ def test_bra1():
                     yield line + '\n'
 
             yield unfinished_line
+
+    return Response(generate(), mimetype='text/csv')
+
+
+# send ISO, download from s3
+@glad_analysis_endpoints.route('/download/<iso_code>/', methods=['GET'])
+@glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/', methods=['GET'])
+@glad_analysis_endpoints.route('/download/<iso_code>/<adm1_code>/<adm2_code>/', methods=['GET'])
+def glad_download_iso_input(iso_code, adm1_code=None, adm2_code=None):
+
+    streaming = download_service.iso_download(request, iso_code, adm1_code, adm2_code)
+
+    def generate():
+        for row in streaming:
+            if row:
+                yield row + '\n'
 
     return Response(generate(), mimetype='text/csv')

@@ -19,9 +19,10 @@ def custom_stats():
 
         geostore_uri = '/geostore/{}'.format(geostore_id)
 
-        geojson = util.query_microservice(geostore_uri)
+        geojson = util.query_microservice(geostore_uri)['data']['attributes']['geojson']
+        resp = custom_geom_queries.calc_stats(geojson, request)
         
-        resp = geojson
+        return jsonify(resp)
 
     else:
 

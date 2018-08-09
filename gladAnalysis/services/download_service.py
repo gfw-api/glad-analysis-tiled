@@ -9,6 +9,8 @@ import boto3
 from boto.s3.connection import S3Connection
 import datetime
 from gladAnalysis.middleware import AthenaWaiter
+from gladAnalysis.utils import util
+
 conn = S3Connection()
 
 
@@ -63,4 +65,51 @@ def read_file(f, start_year, end_year, start_day, end_day, adm1_code=None, adm2_
             if year in full_yrs or (day >= start_day and year == start_year) or (day <= end_day and year == end_year):
                 if adm1_adm2_dict[len_input] == user_dict[len_input]:
                     yield line
-   
+
+
+def iter_all_rows(bucket, start_year, end_year, start_day, end_day, iso, adm1_code, adm2_code):
+    s3_conn = S3Connection()
+    bucket_obj = s3_conn.get_bucket(bucket)
+
+    for item in iterate_bucket_items(bucket, iso):
+        key_obj = bucket_obj.lookup(item['Key'])
+
+        # filter lines then yield them
+        for line in read_file(key_obj, start_year, end_year, start_day, end_day, adm1_code, adm2_code):
+            yield line
+
+
+# https://stackoverflow.com/a/44238708/4355916
+def iterate_bucket_items(bucket, iso):
+    client = boto3.client('s3')
+    paginator = client.get_paginator('list_objects_v2')
+    prefix = 'alerts-tsv/temp/glad-by-state/{}'.format(iso)
+
+    page_iterator = paginator.paginate(Bucket=bucket, Prefix=prefix)
+
+    for page in page_iterator:
+        for item in page['Contents']:
+            yield item
+
+
+def iso_download(request, iso, adm1_code=None, adm2_code=None):
+    bucket = 'gfw2-data'
+
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    user_period = request.args.get('period', '2015-01-01,{}'.format(today))
+
+    user_start = user_period.split(',')[0]
+    user_end = user_period.split(',')[1]
+
+    start_year, start_day = util.date_to_julian(user_start)
+    end_year, end_day = util.date_to_julian(user_end)
+
+    if adm1_code or adm2_code:
+
+        folder = 'alerts-tsv/temp/glad-by-state/{}'.format(iso)
+        query_id = '{}_{}'.format(iso, adm1_code)
+
+        return download_csv(bucket, folder, query_id, start_year, end_year, start_day, end_day, adm1_code, adm2_code)
+
+    else:
+        return iter_all_rows(bucket, start_year, end_year, start_day, end_day, iso, adm1_code, adm2_code)

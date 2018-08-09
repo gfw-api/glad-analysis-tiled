@@ -61,6 +61,15 @@
 			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/test.csv"
 		}
-			}
+			},
+      {
+		"path": "/v1/glad-alerts-athena/download/:iso_code",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/glad-alerts-athena/download/:iso_code"
+		}
+	}
 	]
 }
