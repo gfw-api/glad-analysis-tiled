@@ -1,4 +1,6 @@
 """API ROUTER"""
+import sys
+
 from flask import jsonify, Blueprint, request, Response, stream_with_context
 import requests
 from CTRegisterMicroserviceFlask import request_to_microservice
@@ -10,18 +12,25 @@ from gladAnalysis.utils import util
 custom_geom_endpoints = Blueprint('custom_geom_endpoints', __name__)
 
 
+@custom_geom_endpoints.route('/use/<use_type>/<use_id>', methods=['GET'])
+@custom_geom_endpoints.route('/wdpa/<wdpa_id>', methods=['GET'])
 @custom_geom_endpoints.route('/', methods=['GET', 'POST'])
-def custom_stats():
-    print 'in custom stats'
+def custom_stats(wdpa_id=None, use_type=None, use_id=None):
 
     if request.method == 'GET':
         geostore_id = request.args.get('geostore', None)
-
         geostore_uri = '/geostore/{}'.format(geostore_id)
 
+        if wdpa_id:
+            geostore_uri = '/geostore/wdpa/{}'.format(wdpa_id)
+
+        if use_type:
+            geostore_uri = '/geostore/use/{}/{}'.format(use_type, use_id) #
+
         geojson = util.query_microservice(geostore_uri)['data']['attributes']['geojson']
+
         resp = custom_geom_queries.calc_stats(geojson, request)
-        
+
         return jsonify(resp)
 
     else:

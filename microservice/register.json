@@ -54,6 +54,24 @@
 		}
 	},
 		{
+		"path": "/v1/glad-alerts-athena/wdpa/:wdpa_id",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/glad-alerts-athena/wdpa/:wdpa_id"
+		}
+	},
+		{
+		"path": "/v1/glad-alerts-athena/use/:use_type/:use_id",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/glad-alerts-athena/use/:use_type/:use_id"
+		}
+	},
+		{
 		"path": "/v1/glad-alerts-athena/test.csv",
 		"method": "GET",
 		"binary": true,
