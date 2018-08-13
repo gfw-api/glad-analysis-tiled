@@ -36,6 +36,15 @@
 		}
 	},
 		{
+		"path": "/v1/glad-alerts-athena/download",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/glad-alerts-athena/download"
+		}
+	},
+		{
 		"path": "/v1/glad-alerts-athena/",
 		"method": "POST",
 		"binary": true,

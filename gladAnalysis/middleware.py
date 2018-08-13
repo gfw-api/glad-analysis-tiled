@@ -50,7 +50,7 @@ def get_s3_results_in_dict(key, bucket):
     return alerts_list
 
 
-def format_alerts_custom_geom(alert_date_dict, request, geom_area_ha=None):
+def format_alerts_custom_geom(alert_date_dict, request, geostore_uri, geom_area_ha=None):
     agg_by = request.args.get('aggregate_by', None)
     # filter alerts
     alerts_filtered = util.filter_alerts(alert_date_dict, request)
@@ -64,8 +64,9 @@ def format_alerts_custom_geom(alert_date_dict, request, geom_area_ha=None):
 
     else:
         final_vals = grouped['total']
+    print final_vals
 
-    return serialize_response(request, final_vals, geom_area_ha)
+    return serialize_response(request, final_vals, geom_area_ha, geostore_uri)
 
 
 def create_resp_dict(alerts_list, period=None, agg_by=None):

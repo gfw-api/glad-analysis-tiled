@@ -11,11 +11,10 @@ from gladAnalysis import middleware
 from gladAnalysis.serializers import serialize_response
 
 
-def calc_stats(geojson, request):
+def calc_stats(geojson, request, geostore_uri):
 
     geom = shape(geojson['features'][0]['geometry'])
     geom_area_ha = tile_geometry.calc_area(geom, proj='aea')
-    print geom_area_ha
 
     # check if it's too big to send to raster analysis
     # current cutoff is 10,000,000 ha, or about the size of Kentucky
@@ -41,7 +40,7 @@ def calc_stats(geojson, request):
         alert_date_dict = util.row_list_to_json(rows)
 
         if alert_date_dict:
-            return middleware.format_alerts_custom_geom(alert_date_dict, request, geom_area_ha)
+            return middleware.format_alerts_custom_geom(alert_date_dict, request, geostore_uri, geom_area_ha)
         else:
             return {}
 
@@ -60,6 +59,6 @@ def calc_stats(geojson, request):
         geom_area = response_dict['data']['attributes']['area_ha']
 
         # #serialize response
-        serialized = serialize_response(request, alerts_dict, geom_area)
-        print serialized
+        serialized = serialize_response(request, alerts_dict, geostore_uri, geom_area)
+
         return serialized

@@ -185,13 +185,18 @@ def filter_alerts(alert_date_dict, request):
         alert_date = key.split("::")[0]
         alert_date_obj = datetime.datetime.strptime(alert_date, '%Y-%m-%d')
         confidence = str(key.split("::")[1])
+        if confidence_param: ## filter to just get conf=3
 
-        if confidence_param == 'True': ## filter to just get conf=3
-            if start_date_obj <= alert_date_obj <= end_date_obj and confidence == '3':
+            if (start_date_obj <= alert_date_obj <= end_date_obj) and confidence == '3':
+
                 filtered_dict[alert_date_obj] = val
 
         else:
             if start_date_obj <= alert_date_obj <= end_date_obj:
-                filtered_dict[alert_date_obj] = val
+
+                try:
+                    filtered_dict[alert_date_obj] += val
+                except KeyError:
+                    filtered_dict[alert_date_obj] = val
 
     return filtered_dict

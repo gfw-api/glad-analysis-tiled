@@ -29,7 +29,7 @@ def custom_stats(wdpa_id=None, use_type=None, use_id=None):
 
         geojson = util.query_microservice(geostore_uri)['data']['attributes']['geojson']
 
-        resp = custom_geom_queries.calc_stats(geojson, request)
+        resp = custom_geom_queries.calc_stats(geojson, request, geostore_uri)
 
         return jsonify(resp)
 
@@ -37,19 +37,27 @@ def custom_stats(wdpa_id=None, use_type=None, use_id=None):
 
         geojson = request.get_json().get('geojson', None) if request.get_json() else None
 
-        resp = custom_geom_queries.calc_stats(geojson, request)
+        geostore_uri = None
+        resp = custom_geom_queries.calc_stats(geojson, request, geostore_uri)
 
     return jsonify(resp)
 
 
-@custom_geom_endpoints.route('/download', methods=['POST'])
+@custom_geom_endpoints.route('/download', methods=['POST', 'GET'])
 def custom_download():
 
-    query_params = util.get_query_params(request)
+    if request.method == 'POST':
+        geojson = request.get_json().get('geojson', None) if request.get_json() else None
 
-    geojson = request.get_json().get('geojson', None) if request.get_json() else None
+    if request.method == 'GET':
+        geostore_id = request.args.get('geostore')
+        geostore_uri = '/geostore/{}'.format(geostore_id)
+
+        geojson = util.query_microservice(geostore_uri)['data']['attributes']['geojson']
 
     # http://flask.pocoo.org/snippets/118/
+
+    # this request gets overloaded
     url = 'https://3bkj4476d9.execute-api.us-east-1.amazonaws.com/dev/glad-alerts/download'
     req = requests.post(url, json={"geojson": geojson}, stream=True, params=request.args.to_dict())
 

@@ -1,22 +1,20 @@
 """Serializers"""
 import datetime
 
-
-def serialize_greeting(greeting):
-    """."""
-    return {
-        'id': None,
-        'type': 'greeting',
-        'attributes': {
-            'word': greeting.get('word', None),
-            'propertyTwo': greeting.get('propertyTwo', None),
-            'propertyThree': greeting.get('propertyThree', None),
-            'something': greeting.get('something', None),
-        }
-    }
+from gladAnalysis.utils import util
 
 
-def serialize_response(request, glad_alerts, glad_area=None):
+def download_url(geostore_uri, agg_values, agg_by, period, conf, format):
+
+    geostore_id = util.query_microservice(geostore_uri)['data']['id']
+
+    url = 'glad-alerts-athena/download/?period={}&gladConfirmOnly={}&aggregate_values={}&' \
+          'aggregate_by={}format={}&geostore={}'.format(period, conf, agg_values, agg_by, format, geostore_id)
+
+    return url
+
+
+def serialize_response(request, glad_alerts, geostore_uri, glad_area=None):
 
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', False)
@@ -24,13 +22,17 @@ def serialize_response(request, glad_alerts, glad_area=None):
     period = request.args.get('period', '2015-01-01,{}'.format(today))
     conf = request.args.get('gladConfirmOnly', False)
 
-    # sort alerts
-    glad_alerts_sorted = sorted(glad_alerts, key=lambda k: k[agg_by])
+    if agg_by:
+        glad_alerts = sorted(glad_alerts, key=lambda k: k[agg_by])
+
+    csv_url = download_url(geostore_uri, agg_values, agg_by, period, conf, 'csv')
+    json_url = download_url(geostore_uri, agg_values, agg_by, period, conf, 'json')
+
     serialized_response = {
         "data": {
         "attributes": {
-                        "downloadUrls": {"csv": None, "json": None},
-                        "value": glad_alerts_sorted
+                        "downloadUrls": {"csv": csv_url, "json": json_url},
+                        "value": glad_alerts
                         },
         "id": '20892bc2-5601-424d-8a4a-605c319418a2',
         "period": period,
@@ -48,4 +50,5 @@ def serialize_response(request, glad_alerts, glad_area=None):
     if conf == 'True':
         conf = True
     serialized_response['data']['gladConfirmOnly'] = conf
+
     return serialized_response
