@@ -35,7 +35,7 @@ def download_csv(bucket, path, query_id, conf, user_period, adm1_code=None, adm2
         yield line
 
 
-def read_file(f, conf, user_period, adm1_code=None, adm2_code=None):
+def read_file(f, conf, user_period, adm1_code, adm2_code):
     start_year, end_year, start_day, end_day = parse_period(user_period)
     unfinished_line = ''
     for byte in f:
@@ -75,7 +75,7 @@ def read_file(f, conf, user_period, adm1_code=None, adm2_code=None):
                     yield line
 
 
-def iter_all_rows(bucket, conf, user_period, iso, adm1_code, adm2_code):
+def iter_all_rows(bucket, conf, user_period, iso, adm1_code=None, adm2_code=None):
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)
     start_year, end_year, start_day, end_day = parse_period(user_period)
@@ -104,12 +104,15 @@ def iterate_bucket_items(bucket, iso):
 def iso_download(request, iso, adm1_code=None, adm2_code=None):
     bucket = 'gfw2-data'
 
+    # we should use our util.get_query_params() here or something
+    # period should be validated the same way in this service
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     user_period = request.args.get('period', '2015-01-01,{}'.format(today))
 
     conf = request.args.get('gladConfirmOnly', False)
 
-    if adm1_code or adm2_code:
+    # if adm1, could have adm1 or adm2
+    if adm1_code:
 
         folder = 'alerts-tsv/temp/glad-by-state/{}'.format(iso)
         query_id = '{}_{}'.format(iso, adm1_code)
@@ -117,5 +120,5 @@ def iso_download(request, iso, adm1_code=None, adm2_code=None):
         return download_csv(bucket, folder, query_id, conf, user_period, adm1_code, adm2_code)
 
     else:
-        return iter_all_rows(bucket, user_period, iso, adm1_code, adm2_code)
+        return iter_all_rows(bucket, conf, user_period, iso)
 
