@@ -26,7 +26,7 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 
     formatted_glad = util.format_alerts(request, glad_alerts)
     # format glad alerts to be "count": 4, "week": 5, "year": 2017, etc
-    response = serialize_response(request, formatted_glad, glad_area)
+    response = serialize_response(request, formatted_glad, glad_area, None, route)
 
     return jsonify(response)
 

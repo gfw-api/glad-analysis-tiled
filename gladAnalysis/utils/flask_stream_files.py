@@ -12,7 +12,7 @@ conn = S3Connection()
 import util
 
 
-def iter_all_rows(bucket, start_year, end_year, start_day, end_day, iso, adm1_code, adm2_code):
+def iter_all_rows(bucket, user_period, iso, adm1_code, adm2_code):
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)
 
@@ -20,7 +20,7 @@ def iter_all_rows(bucket, start_year, end_year, start_day, end_day, iso, adm1_co
         key_obj = bucket_obj.lookup(item['Key'])
 
         # filter lines then yield them
-        for line in download_service.read_file(key_obj, start_year, end_year, start_day, end_day, adm1_code, adm2_code):
+        for line in download_service.read_file(key_obj, user_period, adm1_code, adm2_code):
             yield line
 
 

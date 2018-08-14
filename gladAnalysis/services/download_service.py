@@ -24,20 +24,23 @@ def parse_period(period):
 
 def download_csv(bucket, path, query_id, conf, user_period, adm1_code=None, adm2_code=None):
     # read and filter a single csv
-
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)
 
     result_key = '{0}/{1}.csv'.format(path, query_id)
     key_obj = bucket_obj.lookup(result_key)
 
+    headers = ['longitude', 'latitude', 'confidence', 'year', 'julian_day', 'iso', 'adm1', 'adm2', 'confidence_text']
+    yield (','.join(map(str, headers)))
+
     for line in read_file(key_obj, conf, user_period, adm1_code, adm2_code):
         yield line
 
 
-def read_file(f, conf, user_period, adm1_code, adm2_code):
+def read_file(f, user_conf, user_period, adm1_code, adm2_code):
     start_year, end_year, start_day, end_day = parse_period(user_period)
     unfinished_line = ''
+
     for byte in f:
         byte = unfinished_line + byte
         # split on whatever, or use a regex with re.split()
@@ -48,6 +51,8 @@ def read_file(f, conf, user_period, adm1_code, adm2_code):
             # -71.062875,-8.051875,3,2015,216,BRA,1,21,confirm
             # filter output
             split = line.split(",")
+
+            conf = split[2]
 
             adm1 = split[6]
             adm2 = split[7]
@@ -71,14 +76,25 @@ def read_file(f, conf, user_period, adm1_code, adm2_code):
                 full_yrs.append(yr)
 
             if year in full_yrs or (day >= start_day and year == start_year) and (day <= end_day and year == end_year):
-                if adm1_adm2_dict[len_input] == user_dict[len_input]:
-                    yield line
+                    if adm1_adm2_dict[len_input] == user_dict[len_input]:
+                        # print type(user_conf)
+                        # print user_conf
+                        if user_conf:
+                            # print 'conf is yes'
+                            if conf == '3':
+                                yield line
+                        else:
+                            # print 'confirm is no'
+                            yield line
 
 
 def iter_all_rows(bucket, conf, user_period, iso, adm1_code=None, adm2_code=None):
     s3_conn = S3Connection()
     bucket_obj = s3_conn.get_bucket(bucket)
-    start_year, end_year, start_day, end_day = parse_period(user_period)
+
+    headers = ['longitude', 'latitude', 'confidence', 'year', 'julian_day', 'iso', 'adm1', 'adm2',
+               'confidence_text']
+    yield (','.join(map(str, headers)))
 
     for item in iterate_bucket_items(bucket, iso):
         key_obj = bucket_obj.lookup(item['Key'])
@@ -111,12 +127,17 @@ def iso_download(request, iso, adm1_code=None, adm2_code=None):
 
     conf = request.args.get('gladConfirmOnly', False)
 
+    if conf in ['False', 'FALSE', 'false', False]:
+
+        conf = False
+    else:
+
+        conf = True
+
     # if adm1, could have adm1 or adm2
     if adm1_code:
-
         folder = 'alerts-tsv/temp/glad-by-state/{}'.format(iso)
         query_id = '{}_{}'.format(iso, adm1_code)
-
         return download_csv(bucket, folder, query_id, conf, user_period, adm1_code, adm2_code)
 
     else:

@@ -121,7 +121,6 @@ def query_microservice(uri):
 def format_alerts(request, glad_alerts):
     # take the glad alerts format and strip out some attributes
     agg_by = request.args.get('aggregate_by', None)
-    print glad_alerts
 
     if len(glad_alerts['data']['attributes']['value']) == 1:
         return glad_alerts['data']['attributes']['value'][0]['alerts']
@@ -134,6 +133,8 @@ def format_alerts(request, glad_alerts):
 
             if agg_by:
                 alerts_dict[agg_by] = d[agg_by]
+                if not agg_by == 'year':
+                    alerts_dict['year'] = d['year']
 
             formatted_alerts.append(alerts_dict)
 

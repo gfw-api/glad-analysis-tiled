@@ -4,26 +4,25 @@ import datetime
 from gladAnalysis.utils import util
 
 
-def build_download_urls(geostore_uri, agg_values, agg_by, period, conf, format):
+def build_download_urls(route, geostore_uri, agg_values, agg_by, period, conf):
+    download_path = 'glad-alerts-athena/download/'
 
-     if geostore_uri:
-         print geostore_uri
-         print 'OK THIS IS GEOSTORE ABOVE '
-         geostore_id = util.query_microservice(geostore_uri)['data']['id']
+    if route:
+        download_path += route
 
-         url = 'glad-alerts-athena/download/?period={}&gladConfirmOnly={}&aggregate_values={}&' \
-               'aggregate_by={}&geostore={}'.format(period, conf, agg_values, agg_by, geostore_id)
+    url = '{}?period={}&gladConfirmOnly={}&aggregate_values={}&' \
+       'aggregate_by={}'.format(download_path, period, conf, agg_values, agg_by)
 
-         url += '&format={}'
+    if geostore_uri:
+        geostore_id = util.query_microservice(geostore_uri)['data']['id']
+        url += '&geostore={}'.format(geostore_id)
 
-         return url.format('csv'), url.format('json')
+    url += '&format={}'
 
-     else:
-         return None, None
-
+    return url.format('csv'), url.format('json')
 
 
-def serialize_response(request, glad_alerts, glad_area, geostore_uri=None):
+def serialize_response(request, glad_alerts, glad_area, geostore_uri=None, route=None):
 
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', False)
@@ -34,7 +33,7 @@ def serialize_response(request, glad_alerts, glad_area, geostore_uri=None):
     if agg_by:
         glad_alerts = sorted(glad_alerts, key=lambda k: k[agg_by])
 
-    csv_url, json_url = build_download_urls(geostore_uri, agg_values, agg_by, period, conf, 'csv')
+    csv_url, json_url = build_download_urls(route, geostore_uri, agg_values, agg_by, period, conf)
 
     serialized_response = {
         "data": {
