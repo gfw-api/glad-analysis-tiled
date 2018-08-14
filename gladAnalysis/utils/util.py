@@ -112,8 +112,7 @@ def query_microservice(uri):
 
     config_alerts = {
         'uri': uri,
-        'method': 'GET',
-        'ignore_version': True
+        'method': 'GET'
     }
 
     return request_to_microservice(config_alerts)

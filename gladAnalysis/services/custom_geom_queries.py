@@ -11,7 +11,7 @@ from gladAnalysis import middleware
 from gladAnalysis.serializers import serialize_response
 
 
-def calc_stats(geojson, request, geostore_uri):
+def calc_stats(geojson, request, geostore_uri=None):
 
     geom = shape(geojson['features'][0]['geometry'])
     geom_area_ha = tile_geometry.calc_area(geom, proj='aea')
@@ -25,9 +25,6 @@ def calc_stats(geojson, request, geostore_uri):
 
         # connect to vector tiles / sqlite3 database
         dbname = geom_to_db.get_db_name(geom)
-        print dbname
-        import os
-        print os.path.abspath(__file__ )
         conn, cursor = sqlite_util.connect(dbname)
 
         # insert intersect list into mbtiles database as tiles_aoi
@@ -59,6 +56,6 @@ def calc_stats(geojson, request, geostore_uri):
         geom_area = response_dict['data']['attributes']['area_ha']
 
         # #serialize response
-        serialized = serialize_response(request, alerts_dict, geostore_uri, geom_area)
+        serialized = serialize_response(request, alerts_dict, geom_area, geostore_uri)
 
         return serialized

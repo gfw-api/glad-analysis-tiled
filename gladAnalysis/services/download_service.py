@@ -8,10 +8,7 @@ import boto3
 
 from boto.s3.connection import S3Connection
 import datetime
-from gladAnalysis.middleware import AthenaWaiter
 from gladAnalysis.utils import util
-from gladAnalysis.services import athena_query_services
-conn = S3Connection()
 
 
 def parse_period(period):
@@ -122,19 +119,3 @@ def iso_download(request, iso, adm1_code=None, adm2_code=None):
     else:
         return iter_all_rows(bucket, user_period, iso, adm1_code, adm2_code)
 
-
-
-# def point_in_poly_download(geom):
-#     geom_wkt = util.get_shapely_geom(geom)
-#
-#     generator = athena_query_services.GladPointsGenerator(geom_wkt, download=True)
-#
-#     query_id = generator.get_query_id()
-#
-#     bucket, folder = generator.bucket_folder()
-#
-#     user_period = '2016-01-01,2016-06-01'
-#
-#
-#     # return query_id
-#     return download_csv(bucket, folder, query_id, user_period, iso)

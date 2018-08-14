@@ -8,8 +8,8 @@ worker_class = 'gevent'
 workers = 2
 threads = 1
 worker_connections = 1000
-timeout = 30
-keepalive = 2
+timeout = 5000
+keepalive = 30
 max_requests = 1000
 max_requests_jitter = 50
 

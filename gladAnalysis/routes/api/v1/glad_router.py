@@ -22,8 +22,6 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     area_uri = '/geostore/admin/{}'.format(route)
     glad_alerts = util.query_microservice(alerts_uri)
 
-
-
     glad_area = util.query_microservice(area_uri)['data']['attributes']['areaHa']
 
     formatted_glad = util.format_alerts(request, glad_alerts)
@@ -31,29 +29,6 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     response = serialize_response(request, formatted_glad, glad_area)
 
     return jsonify(response)
-
-
-# test iso download - need to flesh this out further
-@glad_analysis_endpoints.route('/test.csv', methods=['GET'])
-def test_bra1():
-
-    # https://stackoverflow.com/a/16890018
-    s3_conn = S3Connection()
-    bucket_obj = s3_conn.get_bucket('gfw2-data')
-
-    def generate():
-        for f in bucket_obj.list(prefix='alerts-tsv/temp/glad-by-state/BRA/BRA_1.csv'):
-            unfinished_line = ''
-            for byte in f:
-                byte = unfinished_line + byte
-                lines = byte.split('\n')
-                unfinished_line = lines.pop()
-                for line in lines:
-                    yield line + '\n'
-
-            yield unfinished_line
-
-    return Response(generate(), mimetype='text/csv')
 
 
 # send ISO, download from s3
