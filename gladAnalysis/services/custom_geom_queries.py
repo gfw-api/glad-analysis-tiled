@@ -43,7 +43,7 @@ def calc_stats(geojson, request, geostore_uri=None):
 
     else:
         print 'geometry has >5% of area in intersecting tiles, trying lambda endpoint'
-        url = 'https://3bkj4476d9.execute-api.us-east-1.amazonaws.com/dev/glad-alerts'
+        url = 'https://0kepi1kf41.execute-api.us-east-1.amazonaws.com/dev/glad-alerts'
         headers = {"Content-Type": "application/json"}
         payload = json.dumps({'geojson': {'type': 'FeatureCollection', 'features': [geojson['features'][0]]}})
 

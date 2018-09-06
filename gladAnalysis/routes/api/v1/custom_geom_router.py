@@ -53,7 +53,7 @@ def custom_download():
         geojson = util.query_microservice(geostore_uri)['data']['attributes']['geojson']
 
     # http://flask.pocoo.org/snippets/118/
-    url = 'https://3bkj4476d9.execute-api.us-east-1.amazonaws.com/dev/glad-alerts/download'
+    url = 'https://0kepi1kf41.execute-api.us-east-1.amazonaws.com/dev/glad-alerts/download'
     req = requests.post(url, json={"geojson": geojson}, stream=True, params=request.args.to_dict())
 
     return Response(stream_with_context(req.iter_content(chunk_size=1024)), content_type = req.headers['content-type'])
