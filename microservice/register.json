@@ -28,19 +28,19 @@
 	},
 		{
 		"path": "/v1/glad-alerts-athena/download",
-		"method": "POST",
+		"method": "GET",
 		"binary": true,
 		"redirect": {
-			"method": "POST",
+			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/download"
 		}
 	},
 		{
 		"path": "/v1/glad-alerts-athena/download",
-		"method": "GET",
+		"method": "POST",
 		"binary": true,
 		"redirect": {
-			"method": "GET",
+			"method": "POST",
 			"path": "/api/v1/glad-alerts-athena/download"
 		}
 	},
@@ -78,42 +78,6 @@
 		"redirect": {
 			"method": "GET",
 			"path": "/api/v1/glad-alerts-athena/use/:use_type/:use_id"
-		}
-	},
-		{
-		"path": "/v1/glad-alerts-athena/test.csv",
-		"method": "GET",
-		"binary": true,
-		"redirect": {
-			"method": "GET",
-			"path": "/api/v1/glad-alerts-athena/test.csv"
-		}
-			},
-      {
-		"path": "/v1/glad-alerts-athena/download/:iso_code",
-		"method": "GET",
-		"binary": true,
-		"redirect": {
-			"method": "GET",
-			"path": "/api/v1/glad-alerts-athena/download/:iso_code"
-		}
-	},
-      {
-		"path": "/v1/glad-alerts-athena/download/:iso_code/:adm1_code",
-		"method": "GET",
-		"binary": true,
-		"redirect": {
-			"method": "GET",
-			"path": "/api/v1/glad-alerts-athena/download/:iso_code/:adm1_code"
-		}
-	},
-      {
-		"path": "/v1/glad-alerts-athena/download/:iso_code/:adm1_code/:adm2_code",
-		"method": "GET",
-		"binary": true,
-		"redirect": {
-			"method": "GET",
-			"path": "/api/v1/glad-alerts-athena/download/:iso_code/:adm1_code/:adm2_code"
 		}
 	}
 	]
