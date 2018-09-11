@@ -1,5 +1,6 @@
 import argparse
 import json
+import sys
 import sqlite3
 
 import requests
@@ -20,6 +21,11 @@ def calc_stats(geojson, request, geostore_id=None):
     # current cutoff is 10,000,000 ha, or about the size of Kentucky
     if geom_area_ha > 10000000:
         print "Geometry is larger than 10 million ha. Tiling request"
+
+        # simplify geometry if it's large
+        if sys.getsizeof(geojson) > 100000:
+            geom = geom.simplify(0.05).buffer(0)
+        
         # find all tiles that intersect the aoi, calculating a proportion of overlap for each
         tile_dict = tile_geometry.build_tile_dict(geom)
 
@@ -43,7 +49,7 @@ def calc_stats(geojson, request, geostore_id=None):
             return serialize_response(request, 0, geom_area_ha, geostore_id)
 
     else:
-        print 'geometry has >5% of area in intersecting tiles, trying lambda endpoint'
+        print 'geometry is < 10 million ha. Passing to raster lambda function '
         url = 'https://0kepi1kf41.execute-api.us-east-1.amazonaws.com/dev/glad-alerts'
         headers = {"Content-Type": "application/json"}
         payload = json.dumps({'geojson': {'type': 'FeatureCollection', 'features': [geojson['features'][0]]}})

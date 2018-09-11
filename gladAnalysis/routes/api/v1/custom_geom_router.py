@@ -9,10 +9,6 @@ from gladAnalysis.errors import Error
 custom_geom_endpoints = Blueprint('custom_geom_endpoints', __name__)
 
 
-@custom_geom_endpoints.errorhandler(Error)
-def handle_error(error):
-    return error.serialize
-
 @custom_geom_endpoints.route('/', methods=['GET', 'POST'])
 @custom_geom_endpoints.route('/use/<use_type>/<use_id>', methods=['GET'])
 @custom_geom_endpoints.route('/wdpa/<wdpa_id>', methods=['GET'])
@@ -66,4 +62,9 @@ def custom_download():
     req = requests.post(url, json={"geojson": geojson}, stream=True, params=request.args.to_dict())
 
     return Response(stream_with_context(req.iter_content(chunk_size=1024)), content_type = req.headers['content-type'])
+
+
+@custom_geom_endpoints.errorhandler(Error)
+def handle_error(error):
+    return error.serialize
 

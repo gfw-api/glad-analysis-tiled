@@ -8,10 +8,6 @@ from gladAnalysis.errors import Error
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 
 
-@glad_analysis_endpoints.errorhandler(Error)
-def handle_error(error):
-    return error.serialize
-
 @glad_analysis_endpoints.route('/admin/<iso_code>', methods=['GET'])
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>', methods=['GET'])
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>/<adm2_code>', methods=['GET'])
@@ -40,4 +36,9 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     response = serialize_response(request, formatted_glad, glad_area, None, id_tuple)
 
     return jsonify(response)
+
+
+@glad_analysis_endpoints.errorhandler(Error)
+def handle_error(error):
+    return error.serialize
 
