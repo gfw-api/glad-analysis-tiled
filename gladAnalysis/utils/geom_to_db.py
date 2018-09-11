@@ -6,6 +6,9 @@ app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 root_dir = os.path.dirname(app_dir)
 data_dir = os.path.join(root_dir, 'data')
 
+from gladAnalysis.errors import Error
+
+
 def get_db_name(geom):
 
     geom_dict = {
@@ -24,10 +27,16 @@ def get_db_name(geom):
 
         if geom.intersects(geom_shp):
             region_name = geom_name
+            # print "\n\nREGION NAME: {}\n\n".format(region_name)
             region_count += 1
 
     if region_count == 1:
         return os.path.join(data_dir, region_name + '.mbtiles')
 
+    elif region_count > 1:
+        raise Error('geometry intersects multiply regions')
+        # raise ValueError('geometry either too big (multiple regions) or outside of GLAD bound s')
+        # return {'error': 'geometry intersects multiply regions'}
+
     else:
-        raise ValueError('geometry either too big (multiple regions) or outside of GLAD bounds')
+        raise Error('geometry falls outside of GLAD area')

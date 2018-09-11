@@ -11,7 +11,7 @@ from gladAnalysis import middleware
 from gladAnalysis.serializers import serialize_response
 
 
-def calc_stats(geojson, request, geostore_uri=None):
+def calc_stats(geojson, request, geostore_id=None):
 
     geom = shape(geojson['features'][0]['geometry'])
     geom_area_ha = tile_geometry.calc_area(geom, proj='aea')
@@ -19,12 +19,13 @@ def calc_stats(geojson, request, geostore_uri=None):
     # check if it's too big to send to raster analysis
     # current cutoff is 10,000,000 ha, or about the size of Kentucky
     if geom_area_ha > 10000000:
-
+        print "Geometry is larger than 10 million ha. Tiling request"
         # find all tiles that intersect the aoi, calculating a proportion of overlap for each
         tile_dict = tile_geometry.build_tile_dict(geom)
 
         # connect to vector tiles / sqlite3 database
         dbname = geom_to_db.get_db_name(geom)
+
         conn, cursor = sqlite_util.connect(dbname)
 
         # insert intersect list into mbtiles database as tiles_aoi
@@ -37,9 +38,9 @@ def calc_stats(geojson, request, geostore_uri=None):
         alert_date_dict = util.row_list_to_json(rows)
 
         if alert_date_dict:
-            return middleware.format_alerts_custom_geom(alert_date_dict, request, geostore_uri, geom_area_ha)
+            return middleware.format_alerts_custom_geom(alert_date_dict, request, geostore_id, geom_area_ha)
         else:
-            return {}
+            return serialize_response(request, 0, geom_area_ha, geostore_id)
 
     else:
         print 'geometry has >5% of area in intersecting tiles, trying lambda endpoint'
@@ -50,12 +51,11 @@ def calc_stats(geojson, request, geostore_uri=None):
         r = requests.post(url, data=payload, headers=headers, params=request.args.to_dict())
 
         response_dict = r.json()
-        print type(response_dict)
 
         alerts_dict = response_dict['data']['attributes']['value']
         geom_area = response_dict['data']['attributes']['area_ha']
 
         # #serialize response
-        serialized = serialize_response(request, alerts_dict, geom_area, geostore_uri)
+        serialized = serialize_response(request, alerts_dict, geom_area, geostore_id)
 
         return serialized

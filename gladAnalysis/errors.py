@@ -1,13 +1,16 @@
 """ERRORS"""
+from flask import jsonify
 
 
 class Error(Exception):
 
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, detail, status=400):
+        self.detail = detail
+        self.status = status
 
     @property
     def serialize(self):
-        return {
-            'message': self.message
-        }
+        return jsonify(errors=[{
+            'status': self.status,
+            'detail': self.detail
+        }]), self.status

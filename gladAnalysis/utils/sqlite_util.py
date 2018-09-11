@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 
 def insert_intersect_table(cursor, tile_dict, tms=True):
@@ -55,6 +56,9 @@ def select_within_tiles(cursor):
 
 
 def connect(sqlite_db):
+    print "Sqlitedb: {}".format(sqlite_db)
+    if not os.path.exists(sqlite_db):
+        raise ValueError('{} does not exist. Dockerfile has download code'.format(sqlite_db))
 
     conn = sqlite3.connect(sqlite_db)
     cursor = conn.cursor()

@@ -100,7 +100,6 @@ def build_tile_dict(geom):
     tile_dict = dict([(x, 1) for x in within_list])
 
     for t in intersect_list:
-
         # do intersection of intersecting tile and original AOI geom
         intersect_area = get_intersect_area(geom, t)
 

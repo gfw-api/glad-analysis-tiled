@@ -1,12 +1,11 @@
 import json
 import datetime
 from collections import Counter, defaultdict
-from functools import partial
-from shapely.ops import transform
 
 from shapely.geometry import shape
-
 from CTRegisterMicroserviceFlask import request_to_microservice
+
+from gladAnalysis.errors import Error
 
 
 def get_shapely_geom(geojson):
@@ -119,7 +118,13 @@ def query_microservice(uri):
         config_alerts['uri'] = '/v2' + uri
         config_alerts['ignore_version'] = True
 
-    return request_to_microservice(config_alerts)
+    response = request_to_microservice(config_alerts)
+
+    if response.get('errors'):
+        raise Error(**response['errors'][0])
+
+    else:
+        return response
 
 
 def format_alerts(request, glad_alerts):

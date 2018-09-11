@@ -1,12 +1,16 @@
 """API ROUTER"""
 from flask import jsonify, Blueprint, request, Response
-from boto.s3.connection import S3Connection
 
 from gladAnalysis.utils import util
 from gladAnalysis.serializers import serialize_response
+from gladAnalysis.errors import Error
 
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 
+
+@glad_analysis_endpoints.errorhandler(Error)
+def handle_error(error):
+    return error.serialize
 
 @glad_analysis_endpoints.route('/admin/<iso_code>', methods=['GET'])
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>', methods=['GET'])

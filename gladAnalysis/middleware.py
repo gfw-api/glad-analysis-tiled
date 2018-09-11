@@ -5,7 +5,7 @@ from utils import util
 from gladAnalysis.serializers import serialize_response
 
 
-def format_alerts_custom_geom(alert_date_dict, request, geostore_uri, geom_area_ha=None):
+def format_alerts_custom_geom(alert_date_dict, request, geostore_id, geom_area_ha=None):
     agg_by = request.args.get('aggregate_by', None)
     # filter alerts
     alerts_filtered = util.filter_alerts(alert_date_dict, request)
@@ -20,7 +20,7 @@ def format_alerts_custom_geom(alert_date_dict, request, geostore_uri, geom_area_
     else:
         final_vals = grouped['total']
 
-    return serialize_response(request, final_vals, geom_area_ha, geostore_uri)
+    return serialize_response(request, final_vals, geom_area_ha, geostore_id)
 
 
 def create_resp_dict(alerts_list, period=None, agg_by=None):

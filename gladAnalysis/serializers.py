@@ -4,7 +4,7 @@ import datetime
 from gladAnalysis.utils import util
 
 
-def build_download_urls(id_tuple, geostore_uri, agg_values, agg_by, period, conf):
+def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf):
 
     # id_tuple is the combination of iso, adm1, adm2
     if id_tuple:
@@ -27,8 +27,7 @@ def build_download_urls(id_tuple, geostore_uri, agg_values, agg_by, period, conf
         url = '{}?period={}&gladConfirmOnly={}&aggregate_values={}&' \
            'aggregate_by={}'.format(download_path, period, conf, agg_values, agg_by)
     
-        if geostore_uri:
-            geostore_id = util.query_microservice(geostore_uri)['data']['id']
+        if geostore_id:
             url += '&geostore={}'.format(geostore_id)
     
         url += '&format={}'
@@ -36,7 +35,7 @@ def build_download_urls(id_tuple, geostore_uri, agg_values, agg_by, period, conf
         return url.format('csv'), url.format('json')
 
 
-def serialize_response(request, glad_alerts, glad_area, geostore_uri=None, id_tuple=None):
+def serialize_response(request, glad_alerts, glad_area, geostore_id=None, id_tuple=None):
 
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', False)
@@ -47,7 +46,7 @@ def serialize_response(request, glad_alerts, glad_area, geostore_uri=None, id_tu
     if agg_by:
         glad_alerts = sorted(glad_alerts, key=lambda k: k[agg_by])
 
-    csv_url, json_url = build_download_urls(id_tuple, geostore_uri, agg_values, agg_by, period, conf)
+    csv_url, json_url = build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf)
 
     serialized_response = {
         "data": {
