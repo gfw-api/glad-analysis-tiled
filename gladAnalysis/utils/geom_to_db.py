@@ -3,14 +3,15 @@ import json
 
 from shapely.geometry import shape
 
+from gladAnalysis.errors import Error
+
 app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 root_dir = os.path.dirname(app_dir)
 data_dir = os.path.join(root_dir, 'data')
 
-from gladAnalysis.errors import Error
-
 
 def get_latest():
+    """Open our latest.json to return info about the max date"""
     local_json = os.path.join(data_dir, 'latest.json')
 
     with open(local_json) as src:
@@ -19,6 +20,7 @@ def get_latest():
     return data
     
 def get_db_name(geom):
+    """Figure out which DB we should be querying for this data"""
 
     geom_dict = {
                  'south_america':
@@ -36,7 +38,6 @@ def get_db_name(geom):
 
         if geom.intersects(geom_shp):
             region_name = geom_name
-            # print "\n\nREGION NAME: {}\n\n".format(region_name)
             region_count += 1
 
     if region_count == 1:
@@ -44,8 +45,7 @@ def get_db_name(geom):
 
     elif region_count > 1:
         raise Error('geometry intersects multiply regions')
-        # raise ValueError('geometry either too big (multiple regions) or outside of GLAD bound s')
-        # return {'error': 'geometry intersects multiply regions'}
 
     else:
         raise Error('geometry falls outside of GLAD area')
+

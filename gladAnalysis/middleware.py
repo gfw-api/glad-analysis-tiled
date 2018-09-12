@@ -9,6 +9,7 @@ from gladAnalysis.errors import Error
 
 
 def format_alerts_custom_geom(alert_date_dict, request, geostore_id, geom_area_ha=None):
+
     agg_by = request.args.get('aggregate_by', None)
     # filter alerts
     alerts_filtered = util.filter_alerts(alert_date_dict, request)
@@ -27,6 +28,7 @@ def format_alerts_custom_geom(alert_date_dict, request, geostore_id, geom_area_h
 
 
 def create_resp_dict(alerts_list, period=None, agg_by=None):
+    # filter a list of alerts by our period, also aggregate
 
     start = period.split(',')[0]
     end = period.split(',')[1]
@@ -66,15 +68,23 @@ def create_resp_dict(alerts_list, period=None, agg_by=None):
 
 
 def get_geojson(func):
-    """Get geodata"""
+    """Grab geojson any way it comes - with geostore ID,
+       with wdpa ID or use ID, or just POSTed geojson.
+       Convert this into a dictionary object and return
+       it as the variable `geojson`
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        print 'in middleware!'
+
         if request.method == 'GET':
             geostore_id = request.args.get('geostore')
             use_type = request.view_args.get('use_type')
             wdpa_id = request.view_args.get('wdpa_id')
 
+            # if it's a GET request, we know it has to have
+            # either geostore ID, use ID, or wdpa ID
+            # we'll use the geostore to look up each of these geometries
+            # so build the geostore URI accordingly
             if geostore_id:
                geostore_uri = '/geostore/{}'.format(geostore_id)
 
@@ -88,10 +98,12 @@ def get_geojson(func):
             else:
                 raise Error('Geostore or geojson must be set')
 
+            # grab the geojson from the geostore
             geostore_query = util.query_microservice(geostore_uri)
             geostore_id = geostore_query['data']['id']
             geojson = geostore_query['data']['attributes']['geojson']
 
+        # if it's a POST, we should find the geojson in the `geojson` property of the body
         elif request.method == 'POST':
             geojson = request.get_json().get('geojson', None) if request.get_json() else None
 
@@ -100,5 +112,7 @@ def get_geojson(func):
 
         # add geojson variable to kwargs so it's accessible in our routes
         kwargs["geojson"] = geojson
+
         return func(*args, **kwargs)
     return wrapper
+

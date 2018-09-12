@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+import logging
 import sqlite3
 
 import requests
@@ -13,6 +14,8 @@ from gladAnalysis.serializers import serialize_response
 
 
 def calc_stats(geojson, request, geostore_id=None):
+    """Given an input geojson and (optionally) some params
+       (period, agg_by, etc), calculate the # of alerts in an AOI"""
 
     geom = shape(geojson['features'][0]['geometry'])
     geom_area_ha = tile_geometry.calc_area(geom, proj='aea')
@@ -20,10 +23,10 @@ def calc_stats(geojson, request, geostore_id=None):
     # check if it's too big to send to raster analysis
     # current cutoff is 10,000,000 ha, or about the size of Kentucky
     if geom_area_ha > 10000000:
-        print "Geometry is larger than 10 million ha. Tiling request"
+        logging.info("Geometry is larger than 10 million ha. Tiling request")
 
         # simplify geometry if it's large
-        if sys.getsizeof(geojson) > 100000:
+        if sys.getsizeof(json.dumps(geojson)) > 100000:
             geom = geom.simplify(0.05).buffer(0)
         
         # find all tiles that intersect the aoi, calculating a proportion of overlap for each
@@ -31,7 +34,6 @@ def calc_stats(geojson, request, geostore_id=None):
 
         # connect to vector tiles / sqlite3 database
         dbname = geom_to_db.get_db_name(geom)
-
         conn, cursor = sqlite_util.connect(dbname)
 
         # insert intersect list into mbtiles database as tiles_aoi
@@ -49,7 +51,7 @@ def calc_stats(geojson, request, geostore_id=None):
             return serialize_response(request, 0, geom_area_ha, geostore_id)
 
     else:
-        print 'geometry is < 10 million ha. Passing to raster lambda function '
+        logging.info('geometry is < 10 million ha. Passing to raster lambda function ')
         url = 'https://0kepi1kf41.execute-api.us-east-1.amazonaws.com/dev/glad-alerts'
         headers = {"Content-Type": "application/json"}
         payload = json.dumps({'geojson': {'type': 'FeatureCollection', 'features': [geojson['features'][0]]}})
@@ -65,3 +67,4 @@ def calc_stats(geojson, request, geostore_id=None):
         serialized = serialize_response(request, alerts_dict, geom_area, geostore_id)
 
         return serialized
+

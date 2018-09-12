@@ -27,8 +27,8 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     glad_alerts = util.query_microservice(alerts_uri)
     glad_area = util.query_microservice(area_uri)['data']['attributes']['areaHa']
 
-    formatted_glad = util.format_alerts(request, glad_alerts)
     # format glad alerts to be "count": 4, "week": 5, "year": 2017, etc
+    formatted_glad = util.format_alerts(request, glad_alerts)
 
     # package up iso/adm1/adm2 to limit # of params passed to function
     id_tuple = (iso_code, adm1_code, adm2_code)
@@ -41,7 +41,6 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 @glad_analysis_endpoints.route('/latest', methods=['GET'])
 def latest():
 
-    # load local JSON
     latest_data = geom_to_db.get_latest()
 
     return jsonify(serialize_latest(latest_data))

@@ -6,9 +6,10 @@ from gladAnalysis.utils import util
 
 def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf):
 
-    # id_tuple is the combination of iso, adm1, adm2
+    # id_tuple looks like this: (iso, adm1, adm2)
     if id_tuple:
 
+        # unpack it 
         iso_code, adm1_code, adm2_code = id_tuple
         download_path = 'http://gfw2-data.s3.amazonaws.com/alerts-tsv/glad-download/'
 
@@ -21,6 +22,7 @@ def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf)
 
         return download_path.format(iso=iso_code, adm1=adm1_code, adm2=adm2_code), None
       
+    # if it's a geostore or custom geom:
     else:
 
         download_path = '/glad-alerts-athena/download/'
@@ -36,6 +38,7 @@ def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf)
 
 
 def serialize_response(request, glad_alerts, glad_area, geostore_id=None, id_tuple=None):
+    # build serialized response for our stats endpoints
 
     agg_values = request.args.get('aggregate_values', False)
     agg_by = request.args.get('aggregate_by', False)
@@ -69,6 +72,7 @@ def serialize_response(request, glad_alerts, glad_area, geostore_id=None, id_tup
 
     if conf == 'True':
         conf = True
+
     serialized_response['data']['gladConfirmOnly'] = conf
 
     return serialized_response
@@ -76,6 +80,7 @@ def serialize_response(request, glad_alerts, glad_area, geostore_id=None, id_tup
 
 def serialize_latest(data):
 
+    # build serialized response for our /latest endpoint
     return {"data":[
              {"attributes": data,
               "id": None,

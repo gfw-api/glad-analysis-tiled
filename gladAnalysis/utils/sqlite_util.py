@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+from gladAnalysis.errors import Error
+
 
 def insert_intersect_table(cursor, tile_dict, tms=True):
 
@@ -8,8 +10,8 @@ def insert_intersect_table(cursor, tile_dict, tms=True):
 
     row_list = []
 
-    # tile_list is a bunch of tile objects
-    # from the mercantile library
+    # tile_dict is a dict of {tile_obj: proportion_covered}
+    # `tile` objects are from the mercantile library
     for tile, proportion_covered in tile_dict.iteritems():
 
         if tms:
@@ -27,6 +29,10 @@ def insert_intersect_table(cursor, tile_dict, tms=True):
 
 
 def create_aoi_tiles_table(cursor):
+    """After we've identified our intersecting / within
+       tiles, insert this table into the db so we can
+       join to it.
+    """
 
     # create or replace tiles_aoi table
     cursor.execute('DROP TABLE IF EXISTS tiles_aoi')
@@ -42,6 +48,7 @@ def create_aoi_tiles_table(cursor):
 
 
 def select_within_tiles(cursor):
+    """Execute the join of our AOI to the all-stats table"""
 
     sql = ('SELECT alert_dict, proportion_covered '
            'FROM tile_summary_stats_z12 '
@@ -56,9 +63,8 @@ def select_within_tiles(cursor):
 
 
 def connect(sqlite_db):
-    print "Sqlitedb: {}".format(sqlite_db)
     if not os.path.exists(sqlite_db):
-        raise ValueError('{} does not exist. Dockerfile has download code'.format(sqlite_db))
+        raise Error('{} does not exist. Dockerfile has download code'.format(sqlite_db))
 
     conn = sqlite3.connect(sqlite_db)
     cursor = conn.cursor()

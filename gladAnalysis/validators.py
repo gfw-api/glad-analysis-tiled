@@ -44,12 +44,13 @@ def validate_geojson(func):
         if geojson['features'][0]['geometry']['type'].lower() not in ['polygon', 'multipolygon']:
             raise Error('input geojson must be of geometry type polygon or multipolygon')
 
+        # if all else passes, try converting it to a shapely shape
         try:
             shape(geom)
         except:
             raise Error('Error converting input geometry into shapely object; check input geojson')
 
-        # return updated geojson
+        # return updated geojson to our function
         kwargs['geojson'] = geojson 
 
         return func(*args, **kwargs)

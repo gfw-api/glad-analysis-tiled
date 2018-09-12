@@ -33,9 +33,12 @@ def calc_area(geom, proj=None, init=None):
 
 def get_intersect_area(aoi, t):
 
+    # grab the geometry of our tile of interest, then intersect it with our AOI
     tile_geom = shape(mercantile.feature(t)['geometry'])
     intersect_geom = aoi.intersection(tile_geom)
 
+    # calc area in web mercator; important given that all tiles of
+    # a certain z level will have the same area in web mercator
     return calc_area(intersect_geom, init="EPSG:3857")
 
 
@@ -60,8 +63,7 @@ def process_tile(tile_list, aoi):
 
         elif tile_geom.intersects(aoi):
 
-            # if it intersects and is < max_z, subdivide it and start the
-            # process again
+            # if it intersects and is < max_z, subdivide it and start the process again
             if t.z < max_z:
 
                 # find the four children of this tile and check them for within/intersect/outside-ness
@@ -107,3 +109,4 @@ def build_tile_dict(geom):
         tile_dict[t] = intersect_area / 9572.547449763457
 
     return tile_dict
+

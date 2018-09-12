@@ -8,30 +8,6 @@ from CTRegisterMicroserviceFlask import request_to_microservice
 from gladAnalysis.errors import Error
 
 
-def get_shapely_geom(geojson):
-    # geojson = geom['geojson']
-
-    if not isinstance(geojson, dict):
-        raise ValueError('Unable to decode input geojson')
-
-    if not geojson.get('features'):
-        raise ValueError('No features in geojson')
-
-    if len(geojson['features']) > 1:
-        raise ValueError('Currently accepting only 1 feature at a time')
-
-    # grab the actual geometry-- that's the level on which shapely operates
-    try:
-        aoi_geom = shape(geojson['features'][0]['geometry'])
-    except:
-        raise ValueError('Unable to decode input geojson')
-
-    if 'Polygon' not in aoi_geom.type:
-        raise ValueError('Geometry type must be polygon or multipolygon')
-
-    return aoi_geom
-
-
 def create_resp_dict(date_dict):
     k = date_dict.keys() # alert date = datetime.datetime(2015, 6, 4, 0, 0)
     v = date_dict.values() # count
@@ -70,17 +46,6 @@ def grouped_and_to_rows(keys, vals, agg_type):
         final_list.append(row)
 
     return final_list
-
-
-def date_to_julian(in_date):
-    fmt = '%Y-%m-%d'
-    in_date_format = datetime.datetime.strptime(in_date, fmt)
-    tt = in_date_format.timetuple()
-    j_day = tt.tm_yday
-
-    year = in_date.split('-')[0]
-
-    return int(year), int(j_day)
 
 
 def get_query_params(request):
@@ -209,3 +174,4 @@ def filter_alerts(alert_date_dict, request):
                     filtered_dict[alert_date_obj] = val
 
     return filtered_dict
+
