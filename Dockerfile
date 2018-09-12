@@ -35,19 +35,19 @@ COPY ./$NAME /opt/$NAME/$NAME
 RUN mkdir -p /opt/$NAME/data
 
 # download all pre-calculated tile databases
-#RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/africa.mbtiles -O /opt/$NAME/data/africa.mbtiles
-#RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/south_america.mbtiles -O /opt/$NAME/data/south_america.mbtiles
-#RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/asia.mbtiles -O /opt/$NAME/data/asia.mbtiles
-#RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/latest.json -O /opt/$NAME/data/latest.json
-COPY africa.mbtiles /opt/$NAME/data/
-COPY latest.json /opt/$NAME/data/
+RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/africa.mbtiles -O /opt/$NAME/data/africa.mbtiles
+RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/south_america.mbtiles -O /opt/$NAME/data/south_america.mbtiles
+RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/asia.mbtiles -O /opt/$NAME/data/asia.mbtiles
+
+# and a JSON that stores our most recent alert date
+RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/latest.json -O /opt/$NAME/data/latest.json
 
 COPY ./microservice /opt/$NAME/microservice
 RUN chown $USER:$USER /opt/$NAME
 RUN chown $USER:$USER /opt/$NAME/data/
 RUN chown $USER:$USER /opt/$NAME/data/africa.mbtiles
-#RUN chown $USER:$USER /opt/$NAME/data/asia.mbtiles
-#RUN chown $USER:$USER /opt/$NAME/data/south_america.mbtiles
+RUN chown $USER:$USER /opt/$NAME/data/asia.mbtiles
+RUN chown $USER:$USER /opt/$NAME/data/south_america.mbtiles
 RUN chown $USER:$USER /opt/$NAME/data/latest.json
 
 # Tell Docker we are going to use this ports
