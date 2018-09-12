@@ -6,7 +6,7 @@ import sqlite3
 
 import requests
 from flask import request
-from shapely.geometry import shape
+from shapely.geometry import shape, Polygon
 
 from gladAnalysis.utils import tile_geometry, sqlite_util, util, geom_to_db
 from gladAnalysis import middleware
@@ -25,16 +25,16 @@ def calc_stats(geojson, request, geostore_id=None):
     if geom_area_ha > 10000000:
         logging.info("Geometry is larger than 10 million ha. Tiling request")
 
-        # simplify geometry if it's large
-        if sys.getsizeof(json.dumps(geojson)) > 100000:
-            geom = geom.simplify(0.05).buffer(0)
-        
-        # find all tiles that intersect the aoi, calculating a proportion of overlap for each
-        tile_dict = tile_geometry.build_tile_dict(geom)
-
         # connect to vector tiles / sqlite3 database
         dbname = geom_to_db.get_db_name(geom)
         conn, cursor = sqlite_util.connect(dbname)
+
+        # simplify geometry if it's large
+        if sys.getsizeof(json.dumps(geojson)) > 100000:
+            geom = Polygon(geom.simplify(0.05).buffer(0).exterior)
+
+        # find all tiles that intersect the aoi, calculating a proportion of overlap for each
+        tile_dict = tile_geometry.build_tile_dict(geom)
 
         # insert intersect list into mbtiles database as tiles_aoi
         sqlite_util.insert_intersect_table(cursor, tile_dict, False)
