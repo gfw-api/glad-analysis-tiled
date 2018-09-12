@@ -1,8 +1,11 @@
 import datetime
+from functools import wraps
+
+from flask import request 
 
 from utils import util
-
 from gladAnalysis.serializers import serialize_response
+from gladAnalysis.errors import Error
 
 
 def format_alerts_custom_geom(alert_date_dict, request, geostore_id, geom_area_ha=None):
@@ -61,3 +64,41 @@ def create_resp_dict(alerts_list, period=None, agg_by=None):
 
     return date_formatted_dict
 
+
+def get_geojson(func):
+    """Get geodata"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print 'in middleware!'
+        if request.method == 'GET':
+            geostore_id = request.args.get('geostore')
+            use_type = request.view_args.get('use_type')
+            wdpa_id = request.view_args.get('wdpa_id')
+
+            if geostore_id:
+               geostore_uri = '/geostore/{}'.format(geostore_id)
+
+            elif use_type:
+                use_id = request.view_args.get('use_id')
+                geostore_uri = '/geostore/use/{}/{}'.format(use_type, use_id)
+
+            elif wdpa_id:
+                geostore_uri = '/geostore/wdpa/{}'.format(wdpa_id) 
+
+            else:
+                raise Error('Geostore or geojson must be set')
+
+            geostore_query = util.query_microservice(geostore_uri)
+            geostore_id = geostore_query['data']['id']
+            geojson = geostore_query['data']['attributes']['geojson']
+
+        elif request.method == 'POST':
+            geojson = request.get_json().get('geojson', None) if request.get_json() else None
+
+        if not geojson:
+            raise Error('Geostore or geojson must be set')
+
+        # add geojson variable to kwargs so it's accessible in our routes
+        kwargs["geojson"] = geojson
+        return func(*args, **kwargs)
+    return wrapper

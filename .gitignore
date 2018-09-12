@@ -94,3 +94,6 @@ ENV/
 
 # mbtiles sqlite databases for large custom stats
 *.mbtiles
+
+# latest.json file - stores the late for which we have alerts
+latest.json

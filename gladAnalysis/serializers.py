@@ -73,3 +73,11 @@ def serialize_response(request, glad_alerts, glad_area, geostore_id=None, id_tup
 
     return serialized_response
 
+
+def serialize_latest(data):
+
+    return {"data":[
+             {"attributes": data,
+              "id": None,
+              "type": "glad-alerts"}
+           ]}

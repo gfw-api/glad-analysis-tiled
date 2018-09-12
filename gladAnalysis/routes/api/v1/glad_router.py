@@ -1,8 +1,8 @@
 """API ROUTER"""
 from flask import jsonify, Blueprint, request, Response
 
-from gladAnalysis.utils import util
-from gladAnalysis.serializers import serialize_response
+from gladAnalysis.utils import util, geom_to_db
+from gladAnalysis.serializers import serialize_response, serialize_latest
 from gladAnalysis.errors import Error
 
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
@@ -36,6 +36,15 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     response = serialize_response(request, formatted_glad, glad_area, None, id_tuple)
 
     return jsonify(response)
+
+
+@glad_analysis_endpoints.route('/latest', methods=['GET'])
+def latest():
+
+    # load local JSON
+    latest_data = geom_to_db.get_latest()
+
+    return jsonify(serialize_latest(latest_data))
 
 
 @glad_analysis_endpoints.errorhandler(Error)

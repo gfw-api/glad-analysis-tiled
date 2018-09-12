@@ -1,4 +1,5 @@
 import os
+import json
 
 from shapely.geometry import shape
 
@@ -9,6 +10,14 @@ data_dir = os.path.join(root_dir, 'data')
 from gladAnalysis.errors import Error
 
 
+def get_latest():
+    local_json = os.path.join(data_dir, 'latest.json')
+
+    with open(local_json) as src:
+        data = json.load(src)
+
+    return data
+    
 def get_db_name(geom):
 
     geom_dict = {

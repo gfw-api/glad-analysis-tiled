@@ -54,6 +54,15 @@
 		}
 	},
 		{
+		"path": "/v1/glad-alerts-athena/latest/",
+		"method": "GET",
+		"binary": true,
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/glad-alerts-athena/latest/"
+		}
+	},
+		{
 		"path": "/v1/glad-alerts-athena/",
 		"method": "GET",
 		"binary": true,
