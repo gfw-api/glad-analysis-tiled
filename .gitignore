@@ -92,7 +92,8 @@ ENV/
 # pycharm directory
 .idea/*
 
-# mbtiles sqlite databases for large custom stats
+# sqlite databases for large custom stats
+*.db
 *.mbtiles
 
 # latest.json file - stores the late for which we have alerts

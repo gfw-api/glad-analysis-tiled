@@ -1,10 +1,15 @@
-import sqlite3
 import os
+import json
+import sqlite3
 
 from gladAnalysis.errors import Error
 
+app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+root_dir = os.path.dirname(app_dir)
+data_dir = os.path.join(root_dir, 'data')
 
-def insert_intersect_table(cursor, tile_dict, tms=True):
+
+def insert_intersect_table(cursor, tile_dict):
 
     create_aoi_tiles_table(cursor)
 
@@ -13,12 +18,6 @@ def insert_intersect_table(cursor, tile_dict, tms=True):
     # tile_dict is a dict of {tile_obj: proportion_covered}
     # `tile` objects are from the mercantile library
     for tile, proportion_covered in tile_dict.iteritems():
-
-        if tms:
-            # need to convert each XYZ tile to TMS
-            # vector tiles are indexed by TMS for some reason
-            # https://gist.github.com/tmcw/4954720
-            tile.y = (2 ** tile.z) - tile.y - 1
 
         row = [tile.x, tile.y, tile.z, proportion_covered]
 
@@ -34,35 +33,59 @@ def create_aoi_tiles_table(cursor):
        join to it.
     """
 
-    # create or replace tiles_aoi table
-    cursor.execute('DROP TABLE IF EXISTS tiles_aoi')
-
-    create_table_sql = ('CREATE TABLE tiles_aoi ( '
+    # create temporary AOI table
+    create_table_sql = ('CREATE TEMPORARY TABLE tiles_aoi ( '
                         'x INTEGER, '
                         'y INTEGER, '
                         'z INTEGER, '
-                        'proportion_covered REAL, '
-                        'PRIMARY KEY (x, y, z)); ')
-
+                        'proportion_covered REAL) ')
     cursor.execute(create_table_sql)
 
+    # add index on x - trying to increase cardinality for easy searching
+    # previously had (x,y,z) as primary key - while true, it was very slow
+    cursor.execute('CREATE INDEX tiles_aoi_idx_x ON tiles_aoi(x)')
 
-def select_within_tiles(cursor):
+
+def select_within_tiles(cursor, request):
     """Execute the join of our AOI to the all-stats table"""
 
-    sql = ('SELECT alert_dict, proportion_covered '
-           'FROM tile_summary_stats_z12 '
+    agg_by = request.args.get('aggregate_by')
+    period = request.args.get('period')
+    gladConfirmOnly = request.args.get('gladConfirmOnly')
+
+    if agg_by:
+        first_col = 'alert_date'
+    else:
+        first_col = 1
+
+    sql = ('SELECT {}, CAST(SUM(proportion_covered * alert_count) as integer) '
+           'FROM tile_alert_stats '
            'INNER JOIN tiles_aoi '
-           'WHERE tile_summary_stats_z12.x = tiles_aoi.x AND tile_summary_stats_z12.y = tiles_aoi.y '
-           'AND tile_summary_stats_z12.z = tiles_aoi.z ')
+           'WHERE tile_alert_stats.x = tiles_aoi.x '
+           'AND tile_alert_stats.y = tiles_aoi.y '
+           'AND tile_alert_stats.z = tiles_aoi.z '.format(first_col)
+           )
 
+    if period:
+        sql += "AND alert_date BETWEEN '{}' AND '{}' ".format(*period.split(','))
+
+    if gladConfirmOnly:
+        sql += 'AND confidence = 3 '
+
+    if agg_by:
+        sql += 'GROUP BY alert_date '
+
+    # run the query against the database
     cursor.execute(sql)
-    rows = cursor.fetchall()
 
-    return rows
+    # return rows - [(alert_date, alert_count), (alert_date, alert_count)]
+    return cursor.fetchall()
 
 
-def connect(sqlite_db):
+def connect():
+
+    sqlite_db = os.path.join(data_dir, 'stats.db')
+
     if not os.path.exists(sqlite_db):
         raise Error('{} does not exist. Dockerfile has download code'.format(sqlite_db))
 
@@ -71,3 +94,10 @@ def connect(sqlite_db):
 
     return conn, cursor
 
+
+def get_latest():
+
+    conn, cursor = connect()
+    cursor.execute('SELECT alert_date FROM latest')
+
+    return cursor.fetchone()[0]
