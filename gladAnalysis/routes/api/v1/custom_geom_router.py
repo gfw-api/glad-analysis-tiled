@@ -3,7 +3,7 @@ from flask import jsonify, Blueprint, request, Response, stream_with_context
 import requests
 
 from gladAnalysis.services import custom_geom_queries
-from gladAnalysis.validators import validate_geojson
+from gladAnalysis.validators import validate_geojson, validate_args_custom_glad, validate_period
 from gladAnalysis.middleware import get_geojson
 from gladAnalysis.errors import Error
 
@@ -15,6 +15,7 @@ custom_geom_endpoints = Blueprint('custom_geom_endpoints', __name__)
 @custom_geom_endpoints.route('/wdpa/<wdpa_id>', methods=['GET'])
 @get_geojson
 @validate_geojson
+@validate_args_custom_glad
 def custom_stats(geojson, geostore_id=None):
     # what is this middlware magic? how do we get rid of WDPA + Use params?
     # Use @get_geojson to those up to get geojson + geostore ID
@@ -26,6 +27,7 @@ def custom_stats(geojson, geostore_id=None):
 @custom_geom_endpoints.route('/download', methods=['GET', 'POST'])
 @get_geojson
 @validate_geojson
+@validate_period
 def custom_download(geojson, geostore_id=None):
 
     # http://flask.pocoo.org/snippets/118/
