@@ -25,7 +25,7 @@ def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf)
     # if it's a geostore or custom geom:
     else:
 
-        download_path = '/glad-alerts-athena/download/'
+        download_path = '/glad-alerts/download/'
         url = '{}?period={}&gladConfirmOnly={}&aggregate_values={}&' \
            'aggregate_by={}'.format(download_path, period, conf, agg_values, agg_by)
 
