@@ -74,6 +74,15 @@ def validate_args_custom_glad(func):
     return wrapper
 
 
+def validate_period_arg(func):
+    """Validate period arg"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        validate_period()
+        return func(*args, **kwargs)
+    return wrapper
+
+
 def validate_period():
 
     # validate period

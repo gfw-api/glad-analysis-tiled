@@ -96,5 +96,3 @@ ENV/
 *.db
 *.mbtiles
 
-# latest.json file - stores the late for which we have alerts
-latest.json

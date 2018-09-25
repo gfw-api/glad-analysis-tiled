@@ -3,7 +3,7 @@ from flask import jsonify, Blueprint, request, Response, stream_with_context
 import requests
 
 from gladAnalysis.services import custom_geom_queries
-from gladAnalysis.validators import validate_geojson, validate_args_custom_glad, validate_period
+from gladAnalysis.validators import validate_geojson, validate_args_custom_glad, validate_period_arg
 from gladAnalysis.middleware import get_geojson
 from gladAnalysis.errors import Error
 
@@ -27,7 +27,7 @@ def custom_stats(geojson, geostore_id=None):
 @custom_geom_endpoints.route('/download', methods=['GET', 'POST'])
 @get_geojson
 @validate_geojson
-@validate_period
+@validate_period_arg
 def custom_download(geojson, geostore_id=None):
 
     # http://flask.pocoo.org/snippets/118/
