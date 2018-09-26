@@ -9,20 +9,6 @@ from CTRegisterMicroserviceFlask import request_to_microservice
 from gladAnalysis.errors import Error
 
 
-def get_query_params(request):
-    # possible params: gladConfirmOnly, aggregate_values, aggregate_by
-    agg_values = request.args.get('aggregate_values', False)
-    agg_by = request.args.get('aggregate_by', None)
-    confidence = request.args.get('gladConfirmOnly', False)
-    today = datetime.datetime.today().strftime('%Y-%m-%d')
-    period = request.args.get('period', '2001-01-01,{}'.format(today))
-    query_params = 'gladConfirmOnly={}&period={}'.format(confidence, period)
-    if agg_values:
-        query_params += '&aggregate_values={}&aggregate_by={}'.format(agg_values, agg_by)
-
-    return query_params
-
-
 def route_constructor(iso_code, adm1_code=None, adm2_code=None):
     route = iso_code
     if adm1_code:

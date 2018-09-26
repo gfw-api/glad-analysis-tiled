@@ -1,4 +1,5 @@
 """API ROUTER"""
+import urllib
 from flask import Blueprint, request
 
 from gladAnalysis.utils import util, sqlite_util
@@ -14,10 +15,10 @@ glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 
     # Query glad-alerts/summary-stats
-    query_params = util.get_query_params(request)
+    query_params = params=request.args.to_dict()
     route = util.route_constructor(iso_code, adm1_code, adm2_code)
 
-    alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, query_params)
+    alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, urllib.urlencode(query_params))
     area_uri = '/geostore/admin/{}'.format(route)
 
     # if it's just an iso, simplify the geostore because we only really want the area_ha
