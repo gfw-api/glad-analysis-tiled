@@ -26,11 +26,11 @@ spec:
           - start
         env:
           - name: PORT
-            value: "5700"
+            value: "5702"
           - name: ENVIRONMENT
             value: prod
           - name: LOCAL_URL
-            value: http://{name}.default.svc.cluster.local:5700
+            value: http://{name}.default.svc.cluster.local:5702
           - name: CT_URL
             valueFrom:
                 secretKeyRef:
@@ -53,6 +53,6 @@ spec:
                   key: API_VERSION
 
         ports:
-          - containerPort: 5700
+          - containerPort: 5702
 
       restartPolicy: Always

@@ -88,3 +88,11 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# pycharm directory
+.idea/*
+
+# sqlite databases for large custom stats
+*.db
+*.mbtiles
+

@@ -1,12 +1,16 @@
-FROM python:3.6-alpine
+FROM python:2.7-alpine
 MAINTAINER Sergio Gordillo sergio.gordillo@vizzuality.com
 
-ENV NAME ps
-ENV USER ps
+ENV NAME gladAnalysis
+ENV USER gladAnalysis
 
 RUN apk update && apk upgrade && \
    apk add --no-cache --update bash git openssl-dev build-base alpine-sdk \
-   libffi-dev postgresql-dev gcc python3-dev musl-dev
+   libffi-dev gcc python2-dev musl-dev
+
+# add GEOS for shapely
+RUN echo "http://mirror.leaseweb.com/alpine/edge/testing/" >> /etc/apk/repositories
+RUN apk add --no-cache geos-dev
 
 RUN addgroup $USER && adduser -s /bin/bash -D -G $USER $USER
 
@@ -25,13 +29,19 @@ COPY gunicorn.py /opt/$NAME/gunicorn.py
 
 # Copy the application folder inside the container
 WORKDIR /opt/$NAME
-
 COPY ./$NAME /opt/$NAME/$NAME
+
+# create data directory and download MVT export databases
+RUN mkdir -p /opt/$NAME/data
+
+# download pre-calculated tile database
+RUN wget http://s3.amazonaws.com/palm-risk-poc/data/mvt/stats.db -O /opt/$NAME/data/stats.db
+
 COPY ./microservice /opt/$NAME/microservice
-RUN chown $USER:$USER /opt/$NAME
+RUN chown -R $USER:$USER /opt/$NAME/data/*
 
 # Tell Docker we are going to use this ports
-EXPOSE 5700
+EXPOSE 5702
 USER $USER
 
 # Launch script
