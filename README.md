@@ -1,33 +1,76 @@
-# Python Skeleton for Micorservices
+# GLAD Analysis API Microservice Overview
 
-## Getting started
+Query the GLAD and forest loss datasets with the [Global Forest Watch (GFW)](http://globalforestwatch.org) API
 
-### Requirements
+- Analyze datasets by a custom area of interest using the [GFW Geostore API](https://github.com/gfw-api/gfw-geostore-api) or by sending GeoJson in Post
+- Analyze datasets by Country, State and Districts (defined by the [GADM Database](http://www.gadm.org/))
+- Analyze datasets by GFW Land Use features (Managed Forest Concessions, Oil Palm Concessions, Mining Concessions and Wood Fiber Concessions- available in select countries)
+- Analyze datasets by Protected Areas (defined by the [WDPA database](http://www.wdpa.org/))
+- Get dataset download urls (csv and json) for areas of interest
+- Summarize analysis results by day, week, month, quarter or year
+- Get the date of the most recent alert
 
-You need to install Docker in your machine if you haven't already [Docker](https://www.docker.com/)
+## API Endpoints
+For endpoint documentation, please visit our [API documentation page for GLAD](https://production-api.globalforestwatch.org/documentation/#/?tags=GLAD)
 
-### Development
-
-Follow the next steps to set up the development environment in your machine.
-
-1. Clone the repo and go to the folder
+# Getting Started
+Perform the following steps:
+* [Install docker](https://docs.docker.com/engine/installation/)
+* [Install control tower](https://github.com/control-tower/control-tower)
+* Clone this repository: ```git clone https://github.com/gfw-api/glad-analysis-tiled```
+* Enter in the directory (cd forest-change-analysis-elastic)
+* Change the CT_URL and Port in the docker-compose-develop.yml and docker-compose.yml and Dockerfile to your machine and port #
+* Open a terminal (if you have mac or windows, open a terminal with the 'Docker Quickstart Terminal') and run the gladanalysis.sh shell script in development mode:
 
 ```ssh
-git clone https://github.com/Vizzuality/python-skeleton
-cd python-skeleton
-```
-
-2. Run the ms.sh shell script in development mode.
-
-```ssh
-./ps.sh develop
+./gladAnalysis.sh develop
 ```
 
 If this is the first time you run it, it may take a few minutes.
 
-### Code structure
+## Testing
+Testing API endpoints
 
-The API has been packed in a Python module (ps). It creates and exposes a WSGI application. The core functionality
-has been divided in three different layers or submodules (Routes, Services and Models).
+```ssh
+./gladAnalysis.sh test
+```
 
-There are also some generic submodules that manage the request validations, HTTP errors and the background tasks manager.
+## Config
+
+## register.json
+This is the configuration file for the rest endpoints in the microservice. This json connects to the API Gateway. It contains variables such as:
+* #(service.id) => Id of the service set in the config file by environment
+* #(service.name) => Name of the service set in the config file by environment
+* #(service.uri) => Base uri of the service set in the config file by environment
+
+Example:
+````
+{
+    "id": "#(service.id)",
+    "name": "#(service.name)",
+    "tags": ["gfw"],
+    "urls": [{
+        "url": "/v1/glad-alerts/admin/:iso_code",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v1/glad-alerts-athena/admin/:iso_code"
+        }]
+    }, {
+        "url": "/v1/glad-alerts/admin/:iso_code/:admin_id",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v1/glad-alerts-athena/admin/:iso_code/:admin_id"
+        }]
+    }, {
+        "url": "/v1/glad-alerts/admin/:iso_code/:admin_id/:dist_id",
+        "method": "GET",
+        "endpoints": [{
+            "method": "GET",
+            "path": "/api/v1/glad-alerts-athena/admin/:iso_code/:admin_id/:dist_id"
+        }]
+    }]
+}
+
+'''

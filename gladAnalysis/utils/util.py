@@ -54,9 +54,10 @@ def format_alerts_admin(request, glad_alerts):
 
             if agg_by:
                 alerts_dict[agg_by] = d[agg_by]
-                if not agg_by == 'year':
+                if agg_by != 'year' and agg_by in ['day', 'week', 'quarter', 'month']:
                     alerts_dict['year'] = d['year']
 
             formatted_alerts.append(alerts_dict)
 
         return formatted_alerts
+
