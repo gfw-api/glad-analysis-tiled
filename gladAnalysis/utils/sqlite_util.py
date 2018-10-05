@@ -58,7 +58,7 @@ def select_within_tiles(cursor, request):
     else:
         first_col = 1
 
-    sql = ('SELECT {}, CAST(SUM(proportion_covered * alert_count) as integer) '
+    sql = ('SELECT {}, SUM(CAST(proportion_covered * alert_count as integer)) '
            'FROM tile_alert_stats '
            'INNER JOIN tiles_aoi '
            'WHERE tile_alert_stats.x = tiles_aoi.x '
@@ -82,9 +82,10 @@ def select_within_tiles(cursor, request):
     return cursor.fetchall()
 
 
-def connect():
+def connect(dbname=None):
 
-    sqlite_db = os.path.join(data_dir, 'stats.db')
+    # useful for testing with our demo db
+    sqlite_db = dbname if dbname else os.path.join(data_dir, 'stats.db')
 
     if not os.path.exists(sqlite_db):
         raise Error('{} does not exist. Dockerfile has download code'.format(sqlite_db))
@@ -101,3 +102,4 @@ def get_latest():
     cursor.execute('SELECT alert_date FROM latest')
 
     return cursor.fetchone()[0]
+

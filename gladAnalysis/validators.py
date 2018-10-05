@@ -40,7 +40,7 @@ def validate_geojson(func):
         try:
             geom = geojson['features'][0]['geometry']
             geom_type = geom['type']
-            geom_type = geom['coordinates']
+            geom_coords = geom['coordinates']
         except:
             raise Error('Invalid geojson - geometry does not have proper type or coordinates objects')
 
@@ -122,13 +122,8 @@ def validate_aggregate():
     # validate aggregate
     agg_by = request.args.get('aggregate_by')
     agg_values = request.args.get('aggregate_values')
-    iso = request.view_args.get('iso_code', None)
 
     agg_list = ['day', 'week', 'quarter', 'month', 'year', 'adm1', 'adm2']
-
-    if iso == 'global':
-        agg_list = [x for x in agg_list if x not in ['adm2']]
-        agg_list.append('iso')
 
     if agg_values:
         if agg_values.lower() not in ['true', 'false']:
@@ -136,15 +131,13 @@ def validate_aggregate():
 
         agg_values = eval(agg_values.title())
 
-    # validate aggregating with global summary
-    if agg_values and agg_by:
+    if agg_by and not agg_values:
+        raise Error("aggregate_values parameter must be true in order to aggregate data")
 
-        if agg_by.lower() not in agg_list:
-            raise Error("aggregate_by must be specified as one of: {} ".format(", ".join(agg_list)))
+    if agg_values and not agg_by:
+        raise Error("if aggregate_values is TRUE, aggregate_by parameter must be specified " \
+               "as one of: {}".format(", ".join(agg_list)))
 
-        if agg_by and not agg_values:
-            raise Error("aggregate_values parameter must be true in order to aggregate data")
+    if agg_values and agg_by and agg_by.lower() not in agg_list:
+        raise Error("aggregate_by must be specified as one of: {} ".format(", ".join(agg_list)))
 
-        if agg_values and not agg_by:
-            raise Error("if aggregate_values is TRUE, aggregate_by parameter must be specified " \
-                   "as one of: {}".format(", ".join(agg_list)))
