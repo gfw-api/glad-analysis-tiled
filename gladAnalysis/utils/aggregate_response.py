@@ -71,7 +71,12 @@ def grouped_and_to_rows(keys, vals, agg_type):
         else:
             row = {'year': key[0], agg_type: key[1]}
 
+        if agg_type == 'day':
+            # for compatibility with old API
+            row['value'] = row['day']
+
         row['count'] = val
         final_list.append(row)
 
     return final_list
+

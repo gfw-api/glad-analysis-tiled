@@ -86,3 +86,4 @@ def serialize_latest(latest_date):
            ]}
 
     return jsonify(resp)
+
