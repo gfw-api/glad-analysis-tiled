@@ -18,7 +18,7 @@ custom_geom_endpoints = Blueprint('custom_geom_endpoints', __name__)
 @validate_args_custom_glad
 def custom_stats(geojson, geostore_id=None):
     # what is this middlware magic? how do we get rid of WDPA + Use params?
-    # Use @get_geojson to those up to get geojson + geostore ID
+    # Use @get_geojson to get geojson + geostore ID
     # the geostore ID is what we'll use in the download URLs response
 
     return custom_geom_queries.calc_stats(geojson, request, geostore_id)

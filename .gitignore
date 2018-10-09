@@ -93,6 +93,5 @@ ENV/
 .idea/*
 
 # sqlite databases for large custom stats
-*.db
-*.mbtiles
+local.db
 
