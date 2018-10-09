@@ -58,7 +58,7 @@ def select_within_tiles(cursor, request):
     else:
         first_col = 1
 
-    sql = ('SELECT {}, SUM(CAST(proportion_covered * alert_count as integer)) '
+    sql = ('SELECT {}, CAST(SUM(proportion_covered * alert_count) as integer) '
            'FROM tile_alert_stats '
            'INNER JOIN tiles_aoi '
            'WHERE tile_alert_stats.x = tiles_aoi.x '

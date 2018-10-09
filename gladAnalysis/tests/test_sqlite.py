@@ -49,7 +49,7 @@ class SqliteTest(unittest.TestCase):
         req = MockRequest()
         data = sqlite_util.select_within_tiles(self.cursor, req)
  
-        self.assertEqual(data[0][1], 86353)
+        self.assertEqual(data[0][1], 87293)
         self.assertEqual(len(data), 1)
 
     def test_agg_by(self):
@@ -68,7 +68,7 @@ class SqliteTest(unittest.TestCase):
         req = MockRequest(period='2015-10-04,2017-01-01')
         data = sqlite_util.select_within_tiles(self.cursor, req)
 
-        self.assertEqual(data[0][1], 16665)
+        self.assertEqual(data[0][1], 16930)
         self.assertEqual(len(data), 1)
 
     def test_conf_filter(self):
@@ -76,7 +76,7 @@ class SqliteTest(unittest.TestCase):
         req = MockRequest(gladConfirmOnly=True)
         data = sqlite_util.select_within_tiles(self.cursor, req)
 
-        self.assertEqual(data[0][1], 77479)
+        self.assertEqual(data[0][1], 78290)
         self.assertEqual(len(data), 1)
 
     def test_date_and_conf_filter(self):
@@ -84,7 +84,7 @@ class SqliteTest(unittest.TestCase):
         req = MockRequest(period='2018-01-01,2018-10-04', gladConfirmOnly=True)
         data = sqlite_util.select_within_tiles(self.cursor, req)
 
-        self.assertEqual(data[0][1], 18160)
+        self.assertEqual(data[0][1], 18307)
         self.assertEqual(len(data), 1)
 
     def test_agg_and_conf_filter(self):
@@ -93,7 +93,7 @@ class SqliteTest(unittest.TestCase):
         data = sqlite_util.select_within_tiles(self.cursor, req)
 
         self.assertEqual(data[0], ('2015-01-03', 146))
-        self.assertEqual(data[-1], ('2018-09-07', 42))
+        self.assertEqual(data[-1], ('2018-09-07', 43))
         self.assertEqual(len(data), 235)
 
     def test_date_and_agg_filter(self):
@@ -101,7 +101,7 @@ class SqliteTest(unittest.TestCase):
         req = MockRequest(period='2018-01-01,2018-10-04', agg_by=True)
         data = sqlite_util.select_within_tiles(self.cursor, req)
 
-        self.assertEqual(data[0], ('2018-01-18', 151))
+        self.assertEqual(data[0], ('2018-01-18', 155))
         self.assertEqual(data[-1], ('2018-09-09', 0))
         self.assertEqual(len(data), 47)
 
@@ -111,7 +111,7 @@ class SqliteTest(unittest.TestCase):
         data = sqlite_util.select_within_tiles(self.cursor, req)
 
         self.assertEqual(data[0], ('2015-02-12', 1))
-        self.assertEqual(data[-1], ('2018-09-07', 42))
+        self.assertEqual(data[-1], ('2018-09-07', 43))
         self.assertEqual(len(data), 231)
 
 
