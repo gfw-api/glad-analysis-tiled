@@ -6,7 +6,7 @@ import sqlite3
 
 import requests
 from flask import request
-from shapely.geometry import shape, Polygon
+from shapely.geometry import shape, Polygon, MultiPolygon
 
 from gladAnalysis.utils import tile_geometry, sqlite_util, aggregate_response
 from gladAnalysis.serializers import serialize_response
