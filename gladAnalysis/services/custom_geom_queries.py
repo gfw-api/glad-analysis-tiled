@@ -10,6 +10,7 @@ from shapely.geometry import shape, Polygon, MultiPolygon
 
 from gladAnalysis.utils import tile_geometry, sqlite_util, aggregate_response
 from gladAnalysis.serializers import serialize_response
+from gladAnalysis.errors import Error
 
 
 def calc_stats(geojson, request, geostore_id):
@@ -52,7 +53,18 @@ def calc_stats(geojson, request, geostore_id):
                   'headers': {'Content-Type': 'application/json'},
                   'params': request.args.to_dict()}
 
-        r = requests.post(url, **kwargs)
-        alerts_dict = r.json()['data']['attributes']['value']
+        try:
+            r = requests.post(url, timeout=28, **kwargs)
+        except requests.exceptions.Timeout:
+            raise Error('Request timed out - try splitting the simplifying the polygon or ' \
+                        'splitting it into multiple requests.')
+
+        resp = r.json()
+
+        if 'errors' in resp.keys():
+            raise Error(resp['errors'][0]['detail'])
+        
+        alerts_dict = resp['data']['attributes']['value']
 
     return serialize_response(request, alerts_dict, geom_area_ha, geostore_id)
+
