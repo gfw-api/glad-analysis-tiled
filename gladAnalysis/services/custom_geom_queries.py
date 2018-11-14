@@ -28,9 +28,13 @@ def calc_stats(geojson, request, geostore_id):
         # simplify geometry if it's large
         if sys.getsizeof(json.dumps(geojson)) > 100000:
             if geom.geom_type == 'Polygon':
-                geom = Polygon(geom.simplify(0.05).buffer(0).exterior)
+                geom = geom.simplify(0.05).buffer(0).exterior
             else:
-                geom = MultiPolygon(geom.simplify(0.05).buffer(0))
+                geom = geom.simplify(0.05).buffer(0)
+
+            # seems unneccesary but important for cases where buffer or exterior
+            # give us a non-polygon shape
+            geom = Polygon(geom) if geom.type == 'Polygon' else MultiPolygon(geom)
 
         # find all tiles that intersect the aoi, calculating a proportion of overlap for each
         tile_dict = tile_geometry.build_tile_dict(geom)
