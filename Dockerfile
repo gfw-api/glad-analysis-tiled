@@ -6,7 +6,7 @@ ENV USER gladAnalysis
 
 RUN apk update && apk upgrade && \
    apk add --no-cache --update bash git openssl-dev build-base alpine-sdk \
-   libffi-dev gcc python2-dev musl-dev
+   libffi-dev gcc python2-dev musl-dev wget
 
 # add GEOS for shapely
 RUN echo "http://mirror.leaseweb.com/alpine/edge/testing/" >> /etc/apk/repositories
