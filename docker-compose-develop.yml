@@ -11,7 +11,6 @@ develop:
     CT_REGISTER_MODE: auto
     ENVIRONMENT: dev
     DEBUG: "True"
-    LOCAL_URL: http://mymachine:5702
     API_VERSION: v1
   command: develop
   volumes:
