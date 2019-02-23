@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+crond
+
 case "$1" in
     develop)
         echo "Running Development Server"
