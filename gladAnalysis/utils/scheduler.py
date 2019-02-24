@@ -8,13 +8,15 @@ import os
 
 def download_file(url, output):
 
-    # NOTE the stream=True parameter below
-    with requests.get(url, stream=True) as r:
-        with open(output, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-                    # f.flush()
+    r = requests.get(url, stream=True)
+
+    with open(output, "wb") as f:
+        for chunk in r.iter_content(chunk_size=1024):
+
+            # writing one chunk at a time to file
+            if chunk:
+                f.write(chunk)
+
     return output
 
 
@@ -27,7 +29,7 @@ def sync_db():
     temp = "/opt/gladAnalysis/data/temp.db"
 
     r = requests.head(url)
-    meta = r.headers['last-modified']
+    meta = r.headers["last-modified"]
     meta_modifiedtime = time.mktime(datetime.datetime.strptime(meta, "%a, %d %b %Y %X GMT").timetuple())
 
     if os.path.getmtime(output) < meta_modifiedtime:
@@ -38,6 +40,6 @@ def sync_db():
             logging.info("Downloaded latest version of stats.db")
         except Exception as e:
             logging.error("Failed to download latest stats.db")
-            logging.error(e)
+            logging.exception(e)
     else:
         logging.debug("Local stats.db is up to date. Remote file dates: " + meta)

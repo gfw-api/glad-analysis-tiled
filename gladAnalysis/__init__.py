@@ -21,7 +21,6 @@ logging.basicConfig(
     datefmt='%Y%m%d-%H:%M%p',
 )
 
-
 sched = BackgroundScheduler(timezone="UTC", daemon=True)
 sched.add_job(sync_db,'interval', minutes=5)
 sched.start()

@@ -35,11 +35,10 @@ COPY ./$NAME /opt/$NAME/$NAME
 RUN mkdir -p /opt/$NAME/data
 
 # download pre-calculated tile database
-# and check afterwards every five minutes if there is a new file
-RUN wget -N http://gfw2-data.s3.amazonaws.com/forest_change/umd_landsat_alerts/prod/db/stats.db -O /opt/$NAME/data/stats.db
+RUN wget http://gfw2-data.s3.amazonaws.com/forest_change/umd_landsat_alerts/prod/db/stats.db -O /opt/$NAME/data/stats.db
 
 COPY ./microservice /opt/$NAME/microservice
-RUN chown -R $USER:$USER /opt/$NAME/data/*
+RUN chown -R $USER:$USER /opt/$NAME/data
 
 # Tell Docker we are going to use this ports
 EXPOSE 5702
