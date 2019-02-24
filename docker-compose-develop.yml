@@ -1,18 +1,18 @@
-develop:
-  extends:
-    file: base.yml
-    service: base
-  ports:
-    - "45733:35730"
-  env_file:
-    - dev.env
-  container_name: glad-analysis-develop
-  environment:
-    CT_REGISTER_MODE: auto
-    ENVIRONMENT: dev
-    DEBUG: "True"
-    API_VERSION: v1
-  command: develop
-  volumes:
-    - ./gladAnalysis:/opt/gladAnalysis/gladAnalysis
-  restart: always
+version: "3"
+services:
+  develop:
+    build: .
+    ports:
+      - "5702:5702"
+    container_name: glad-analysis
+    env_file:
+      - dev.env
+    environment:
+      PORT: 5702
+      API_VERSION: v1
+      CT_REGISTER_MODE: auto
+      DEBUG: "True"
+    command: develop
+    volumes:
+      - ./gladAnalysis:/opt/gladAnalysis/gladAnalysis
+    restart: always

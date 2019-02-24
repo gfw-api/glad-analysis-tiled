@@ -1,11 +1,13 @@
-test:
-  extends:
-    file: base.yml
-    service: base
-  container_name: glad-analysis-test
-  env_file:
-    - dev.env
-  environment:
-    DEBUG: "True"
-    API_VERSION: v1
-  command: test
+version: "3"
+services:
+  test:
+    build: .
+    ports:
+      - "5702"
+    container_name: glad-analysis-test
+    env_file:
+      - dev.env
+    environment:
+      DEBUG: "True"
+      API_VERSION: v1
+    command: test
