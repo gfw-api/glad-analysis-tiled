@@ -5,3 +5,4 @@ httmock==1.2.6
 shapely==1.6b4
 mercantile==1.0.4
 pyproj==1.9.5.1
+APScheduler==3.5.3

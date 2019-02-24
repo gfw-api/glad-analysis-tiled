@@ -10,12 +10,33 @@ from gladAnalysis.routes.api import error
 from gladAnalysis.routes.api.v1 import glad_analysis_endpoints, custom_geom_endpoints
 from gladAnalysis.utils.files import load_config_json
 import CTRegisterMicroserviceFlask
+import subprocess as sp
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 logging.basicConfig(
     level=SETTINGS.get('logging', {}).get('level'),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     datefmt='%Y%m%d-%H:%M%p',
 )
+
+def sync_db():
+
+    logging.debug("Sync stats.db")
+
+    url = "http://gfw2-data.s3.amazonaws.com/forest_change/umd_landsat_alerts/prod/db/stats.db"
+    output = "/opt/gladAnalysis/data/stats.db"
+    cmd = ["wget", "-N", url, "-O", output]
+
+    try:
+        sp.check_call(cmd)
+    except sp.CalledProcessError as e:
+        logging.error("Failed to sync stats.dv")
+        logging.error(e)
+
+sched = BackgroundScheduler(timezone="UTC", daemon=True)
+sched.add_job(sync_db,'interval', minutes=5)
+sched.start()
 
 # Flask App
 app = Flask(__name__)
