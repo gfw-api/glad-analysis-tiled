@@ -5,8 +5,6 @@ services:
     ports:
       - "5702"
     container_name: glad-analysis-test
-    env_file:
-      - dev.env
     environment:
       DEBUG: "True"
       API_VERSION: v1
