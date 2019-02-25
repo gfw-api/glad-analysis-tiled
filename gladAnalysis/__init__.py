@@ -9,13 +9,21 @@ from gladAnalysis.config import SETTINGS
 from gladAnalysis.routes.api import error
 from gladAnalysis.routes.api.v1 import glad_analysis_endpoints, custom_geom_endpoints
 from gladAnalysis.utils.files import load_config_json
+from gladAnalysis.utils.scheduler import sync_db
+
 import CTRegisterMicroserviceFlask
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 logging.basicConfig(
     level=SETTINGS.get('logging', {}).get('level'),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     datefmt='%Y%m%d-%H:%M%p',
 )
+
+sched = BackgroundScheduler(timezone="UTC", daemon=True)
+sched.add_job(sync_db,'interval', minutes=5)
+sched.start()
 
 # Flask App
 app = Flask(__name__)

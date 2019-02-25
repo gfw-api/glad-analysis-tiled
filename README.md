@@ -17,11 +17,11 @@ For endpoint documentation, please visit our [API documentation page for GLAD](h
 Perform the following steps:
 * [Install docker](https://docs.docker.com/engine/installation/)
 * [Install control tower](https://github.com/control-tower/control-tower)
-* Clone this repository: ```git clone https://github.com/gfw-api/glad-analysis-tiled```
-* Enter in the directory (cd forest-change-analysis-elastic)
-* Change the CT_URL and Port in the docker-compose-develop.yml and docker-compose.yml and Dockerfile to your machine and port #
-* Open a terminal (if you have mac or windows, open a terminal with the 'Docker Quickstart Terminal') and run the gladanalysis.sh shell script in development mode:
-
+* clone Repo `git clone https://github.com/gfw-api/glad-analysis-tiled`
+* CD into diretory `cd glad-analysis-tiled`
+* Copy env file `cp dev.env.sample dev.env`
+* Change content accordingly 
+* Run in develop mode
 ```ssh
 ./gladAnalysis.sh develop
 ```
