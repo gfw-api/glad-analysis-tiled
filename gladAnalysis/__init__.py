@@ -32,7 +32,7 @@ app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.register_blueprint(glad_analysis_endpoints, url_prefix='/api/v1/glad-alerts-athena')
 app.register_blueprint(custom_geom_endpoints, url_prefix='/api/v1/glad-alerts-athena')
-
+logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
 
 # CT
 info = load_config_json('register')
