@@ -1,11 +1,12 @@
 import json
 import unittest
 
-from shapely.geometry import shape
 import mercantile
+from shapely.geometry import shape
 
 from gladAnalysis import app
 from gladAnalysis.utils.tile_geometry import build_tile_dict
+
 
 class TilingTest(unittest.TestCase):
 
@@ -16,7 +17,6 @@ class TilingTest(unittest.TestCase):
         self.app = app.test_client()
 
     def test_tile_geom(self):
-
         # load src geojson
         with open('gladAnalysis/tests/fixtures/BRA_src.geojson') as src:
             geojson = json.load(src)
@@ -43,6 +43,4 @@ class TilingTest(unittest.TestCase):
 
         # compare to our saved version of the tiled geometry
         # this includes tile_fraction calcs as well
-        self.assertEqual(tiled_geojson, tiled_features)
-
-        
+        self.assertEqual(json.dumps(sorted(tiled_geojson)), json.dumps(sorted(tiled_features)))

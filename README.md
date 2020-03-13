@@ -1,5 +1,8 @@
 # GLAD Analysis API Microservice Overview
 
+[![Build Status](https://travis-ci.org/gfw-api/glad-analysis-tiled.svg?branch=develop)](https://travis-ci.org/gfw-api/glad-analysis-tiled)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/55617d7d21d384ce68e6/test_coverage)](https://codeclimate.com/github/gfw-api/glad-analysis-tiled/test_coverage)
+
 Query the GLAD and forest loss datasets with the [Global Forest Watch (GFW)](http://globalforestwatch.org) API
 
 - Analyze datasets by a custom area of interest using the [GFW Geostore API](https://github.com/gfw-api/gfw-geostore-api) or by sending GeoJson in Post

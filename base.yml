@@ -1,7 +1,0 @@
-base:
-  build: .
-  ports:
-    - "5702:5702"
-  environment:
-    PORT: 5702
-  container_name: glad-analysis

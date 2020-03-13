@@ -1,10 +1,11 @@
 """API ROUTER"""
 import urllib
+
 from flask import Blueprint, request
 
-from gladAnalysis.utils import util, sqlite_util
-from gladAnalysis.serializers import serialize_response, serialize_latest
 from gladAnalysis.errors import Error
+from gladAnalysis.serializers import serialize_response, serialize_latest
+from gladAnalysis.utils import util, sqlite_util
 
 glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 
@@ -13,9 +14,8 @@ glad_analysis_endpoints = Blueprint('glad_analysis_endpoints', __name__)
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>', methods=['GET'])
 @glad_analysis_endpoints.route('/admin/<iso_code>/<adm1_code>/<adm2_code>', methods=['GET'])
 def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
-
     # Query glad-alerts/summary-stats
-    query_params = params=request.args.to_dict()
+    query_params = params = request.args.to_dict()
     route = util.route_constructor(iso_code, adm1_code, adm2_code)
 
     alerts_uri = '/glad-alerts/summary-stats/admin/{}?{}'.format(route, urllib.urlencode(query_params))
@@ -40,11 +40,10 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
 @glad_analysis_endpoints.route('/latest', methods=['GET'])
 def latest():
     latest_data = sqlite_util.get_latest()
-    
+
     return serialize_latest(latest_data)
 
 
 @glad_analysis_endpoints.errorhandler(Error)
 def handle_error(error):
     return error.serialize
-
