@@ -23,5 +23,6 @@ before_script:
 script:
   - coverage run -m unittest -v gladAnalysis.tests
 after_script:
+  - coverage report
   - coverage xml
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
