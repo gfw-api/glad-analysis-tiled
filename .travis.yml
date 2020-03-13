@@ -19,7 +19,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - coverage run -m unittest -v gladAnalysis.tests
+  - coverage run --source=gladAnalysis -m unittest -v gladAnalysis.tests
 after_script:
   - coverage report
   - coverage xml
