@@ -5,6 +5,7 @@ python:
   - "2.7"
 install:
     - pip install -r requirements.txt
+    - pip install -r requirements_dev.txt
 env:
   global:
     - CC_TEST_REPORTER_ID=ca3dad8b97db93486d7c8d183dba70c9953d1a6e7fee7944902d597ea9b76d5c
