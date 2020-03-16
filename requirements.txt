@@ -1,5 +1,5 @@
 Flask==1.0.2
-CTRegisterMicroserviceFlask==0.3.8
+CTRegisterMicroserviceFlask==0.5.1
 requests==2.12.4
 httmock==1.2.6
 shapely==1.6.4
