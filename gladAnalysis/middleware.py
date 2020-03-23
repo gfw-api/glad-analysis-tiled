@@ -2,8 +2,8 @@ from functools import wraps
 
 from flask import request
 
-from utils import util
 from gladAnalysis.errors import Error
+from utils import util
 
 
 def get_geojson(func):
@@ -12,6 +12,7 @@ def get_geojson(func):
        Convert this into a dictionary object and return
        it as the variable `geojson`
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
 
@@ -25,7 +26,7 @@ def get_geojson(func):
             # we'll use the geostore to look up each of these geometries
             # so build the geostore URI accordingly
             if geostore_id:
-               geostore_uri = '/geostore/{}'.format(geostore_id)
+                geostore_uri = '/geostore/{}'.format(geostore_id)
 
             # convert use_type & use_id into a geostore ID
             # important for serialization - that's how we'll build a download url
@@ -61,5 +62,5 @@ def get_geojson(func):
         kwargs["geojson"] = geojson
 
         return func(*args, **kwargs)
-    return wrapper
 
+    return wrapper

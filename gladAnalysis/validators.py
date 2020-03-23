@@ -1,16 +1,16 @@
 """VALIDATORS"""
 import datetime
-
 from functools import wraps
 
+from flask import request
 from shapely.geometry import shape
-from flask import jsonify, Blueprint, request
 
 from gladAnalysis.errors import Error
 
 
 def validate_geojson(func):
     """validate input geojson"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
 
@@ -25,12 +25,12 @@ def validate_geojson(func):
 
         # convert to a featurecollection - that's our preferred format
         if gj_type.lower() == 'feature':
-            geojson = {"type": "FeatureCollection", "features": [ geojson ]}
-        
+            geojson = {"type": "FeatureCollection", "features": [geojson]}
+
         # if it's a featurecollection, just make sure that it has features
         elif gj_type.lower() == 'featurecollection':
-             if not geojson.get('features'):
-                 raise Error('feature collection must have features object')
+            if not geojson.get('features'):
+                raise Error('feature collection must have features object')
         else:
             raise Error('input geojson must be of type feature collection or feature')
 
@@ -54,17 +54,18 @@ def validate_geojson(func):
             raise Error('Error converting input geometry into shapely object; check input geojson')
 
         # return updated geojson to our function
-        kwargs['geojson'] = geojson 
+        kwargs['geojson'] = geojson
 
         return func(*args, **kwargs)
+
     return wrapper
 
 
 def validate_args_custom_glad(func):
     """Validate user arguments"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
-
         validate_aggregate()
 
         validate_period()
@@ -76,15 +77,16 @@ def validate_args_custom_glad(func):
 
 def validate_period_arg(func):
     """Validate period arg"""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         validate_period()
         return func(*args, **kwargs)
+
     return wrapper
 
 
 def validate_period():
-
     # validate period
     today = datetime.datetime.now()
     period = request.args.get('period', None)
@@ -118,7 +120,6 @@ def validate_period():
 
 
 def validate_aggregate():
-
     # validate aggregate
     agg_by = request.args.get('aggregate_by')
     agg_values = request.args.get('aggregate_values')
@@ -136,8 +137,7 @@ def validate_aggregate():
 
     if agg_values and not agg_by:
         raise Error("if aggregate_values is TRUE, aggregate_by parameter must be specified " \
-               "as one of: {}".format(", ".join(agg_list)))
+                    "as one of: {}".format(", ".join(agg_list)))
 
     if agg_values and agg_by and agg_by.lower() not in agg_list:
         raise Error("aggregate_by must be specified as one of: {} ".format(", ".join(agg_list)))
-

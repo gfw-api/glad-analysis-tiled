@@ -5,7 +5,6 @@ from flask import jsonify
 
 
 def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf):
-
     # id_tuple looks like this: (iso, adm1, adm2)
     if id_tuple:
 
@@ -14,7 +13,7 @@ def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf)
         download_path = 'http://gfw2-data.s3.amazonaws.com/alerts-tsv/glad-download/'
 
         if adm2_code:
-           download_path += 'adm2/{iso}/{adm1}/{iso}_{adm1}_{adm2}.csv'
+            download_path += 'adm2/{iso}/{adm1}/{iso}_{adm1}_{adm2}.csv'
         elif adm1_code:
             download_path += 'adm1/{iso}/{iso}_{adm1}.csv'
         else:
@@ -27,7 +26,7 @@ def build_download_urls(id_tuple, geostore_id, agg_values, agg_by, period, conf)
 
         download_path = '/glad-alerts/download/'
         url = '{}?period={}&gladConfirmOnly={}&aggregate_values={}&' \
-           'aggregate_by={}'.format(download_path, period, conf, agg_values, agg_by)
+              'aggregate_by={}'.format(download_path, period, conf, agg_values, agg_by)
 
         if geostore_id:
             url += '&geostore={}'.format(geostore_id)
@@ -53,14 +52,14 @@ def serialize_response(request, glad_alerts, aoi_area_ha, geostore_id=None, id_t
 
     serialized_response = {
         "data": {
-        "attributes": {
-                        "downloadUrls": {"csv": csv_url, "json": json_url},
-                        "value": glad_alerts,
-                        "areaHa": aoi_area_ha
-                        },
-        "id": '20892bc2-5601-424d-8a4a-605c319418a2',
-        "period": period,
-        "type": 'glad-alerts'
+            "attributes": {
+                "downloadUrls": {"csv": csv_url, "json": json_url},
+                "value": glad_alerts,
+                "areaHa": aoi_area_ha
+            },
+            "id": '20892bc2-5601-424d-8a4a-605c319418a2',
+            "period": period,
+            "type": 'glad-alerts'
         }}
 
     if agg_values:
@@ -76,14 +75,12 @@ def serialize_response(request, glad_alerts, aoi_area_ha, geostore_id=None, id_t
 
 
 def serialize_latest(latest_date):
-
     # build serialized response for our /latest endpoint
-    resp = {"data":[
-             {"attributes":
-               {"date": latest_date},
-              "id": None,
-              "type": "glad-alerts"}
-           ]}
+    resp = {"data": [
+        {"attributes":
+             {"date": latest_date},
+         "id": None,
+         "type": "glad-alerts"}
+    ]}
 
     return jsonify(resp)
-

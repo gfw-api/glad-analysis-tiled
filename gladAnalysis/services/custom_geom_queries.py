@@ -1,16 +1,13 @@
-import argparse
 import json
-import sys
 import logging
-import sqlite3
+import sys
 
 import requests
-from flask import request
 from shapely.geometry import shape, Polygon, MultiPolygon
 
-from gladAnalysis.utils import tile_geometry, sqlite_util, aggregate_response
-from gladAnalysis.serializers import serialize_response
 from gladAnalysis.errors import Error
+from gladAnalysis.serializers import serialize_response
+from gladAnalysis.utils import tile_geometry, sqlite_util, aggregate_response
 
 
 def calc_stats(geojson, request, geostore_id):
@@ -67,8 +64,7 @@ def calc_stats(geojson, request, geostore_id):
 
         if 'errors' in resp.keys():
             raise Error(resp['errors'][0]['detail'])
-        
+
         alerts_dict = resp['data']['attributes']['value']
 
     return serialize_response(request, alerts_dict, geom_area_ha, geostore_id)
-

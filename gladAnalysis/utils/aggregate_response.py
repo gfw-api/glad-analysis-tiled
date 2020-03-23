@@ -3,7 +3,6 @@ from collections import defaultdict
 
 
 def format_alerts_geom(rows, request):
-
     agg_by = request.args.get('aggregate_by')
 
     # pull first row from sql response [(<alert_date>, <alert_count>), ()]
@@ -33,29 +32,27 @@ def format_alerts_geom(rows, request):
 
 
 def rows_to_agg_dict(rows, agg_by):
-
     # convert rows [(<date_str), count), (<date_str, count), ...]
     # to {date_obj: count} dict
     date_dict = {datetime.datetime.strptime(k, '%Y-%m-%d'): v
-                for (k, v) in rows}
-    k = date_dict.keys() # alert date = datetime.datetime(2015, 6, 4, 0, 0)
-    v = date_dict.values() # count
+                 for (k, v) in rows}
+    k = date_dict.keys()  # alert date = datetime.datetime(2015, 6, 4, 0, 0)
+    v = date_dict.values()  # count
 
     resp_dict = {
-                 'year': grouped_and_to_rows([x.year for x in k], v, 'year'),
-                 # month --> quarter calc: https://stackoverflow.com/questions/1406131
-                 'quarter': grouped_and_to_rows([(x.year, (x.month-1)//3 + 1) for x in k], v, 'quarter'),
-                 'month':  grouped_and_to_rows([(x.year, x.month) for x in k], v, 'month'),
-                 'week': grouped_and_to_rows([(x.year, x.isocalendar()[1]) for x in k], v, 'week'),
-                 'day': grouped_and_to_rows([(x.year, x.strftime('%Y-%m-%d')) for x in k], v, 'day'),
-                 'total': sum(v)
-                }
+        'year': grouped_and_to_rows([x.year for x in k], v, 'year'),
+        # month --> quarter calc: https://stackoverflow.com/questions/1406131
+        'quarter': grouped_and_to_rows([(x.year, (x.month - 1) // 3 + 1) for x in k], v, 'quarter'),
+        'month': grouped_and_to_rows([(x.year, x.month) for x in k], v, 'month'),
+        'week': grouped_and_to_rows([(x.year, x.isocalendar()[1]) for x in k], v, 'week'),
+        'day': grouped_and_to_rows([(x.year, x.strftime('%Y-%m-%d')) for x in k], v, 'day'),
+        'total': sum(v)
+    }
 
     return resp_dict[agg_by]
 
 
 def grouped_and_to_rows(keys, vals, agg_type):
-
     # source: https://jakevdp.github.io/blog/2017/03/22/group-by-from-scratch/
     count = defaultdict(int)
     for key, val in zip(keys, vals):
@@ -79,4 +76,3 @@ def grouped_and_to_rows(keys, vals, agg_type):
         final_list.append(row)
 
     return final_list
-

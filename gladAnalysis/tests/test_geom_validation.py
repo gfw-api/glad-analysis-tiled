@@ -1,7 +1,5 @@
-import unittest
 import json
-
-import requests
+import unittest
 
 from gladAnalysis import app
 
@@ -18,7 +16,6 @@ class GeomValidationTest(unittest.TestCase):
         return json.loads(response.data)['errors'][0]['detail']
 
     def post_geom(self, geom):
-
         url = '/api/v1/glad-alerts-athena'
         data = {'geojson': geom}
         response = self.app.post(url, json=data, follow_redirects=True)
@@ -32,22 +29,18 @@ class GeomValidationTest(unittest.TestCase):
         return error
 
     def test_no_geojson(self):
-
         error_text = self.post_geom({})
         self.assertEqual(error_text, 'Geostore or geojson must be set')
 
     def test_no_type(self):
-
         error_text = self.post_geom({'this': 'ok'})
         self.assertEqual(error_text, 'Invalid geojson- must have type property')
 
     def test_no_features(self):
-
         error_text = self.post_geom({'type': 'FeatureCollection'})
         self.assertEqual(error_text, 'feature collection must have features object')
 
     def test_too_many_features(self):
-
         error_text = self.post_geom({'type': 'FeatureCollection', 'features': [1, 2]})
         self.assertEqual(error_text, 'input geojson must have only one feature')
 
@@ -57,17 +50,16 @@ class GeomValidationTest(unittest.TestCase):
         self.assertEqual(error_text, 'Invalid geojson - geometry does not have proper type or coordinates objects')
 
     def test_line_geom(self):
-        aoi = {"type":"FeatureCollection","features":[
-                  {"type":"Feature","properties":{},"geometry":
-                      {"type":"LineString","coordinates":[[-57,-15],[-56,-18],[-57,-19],[-58,-19]]}
-               }]}
+        aoi = {"type": "FeatureCollection", "features": [
+            {"type": "Feature", "properties": {}, "geometry":
+                {"type": "LineString", "coordinates": [[-57, -15], [-56, -18], [-57, -19], [-58, -19]]}
+             }]}
         error_text = self.post_geom(aoi)
         self.assertEqual(error_text, 'input geojson must be of geometry type polygon or multipolygon')
 
     def test_invalid_polygon(self):
-
         # last coordinate has only one value
-        aoi = {'type': 'Feature', 'geometry': {'type': 'Polygon', 'coordinates': [[[-57,-17],[-57,-15],[-60,-15],[-60]]]}}
+        aoi = {'type': 'Feature',
+               'geometry': {'type': 'Polygon', 'coordinates': [[[-57, -17], [-57, -15], [-60, -15], [-60]]]}}
         error_text = self.post_geom(aoi)
         self.assertEqual(error_text, 'Error converting input geometry into shapely object; check input geojson')
-

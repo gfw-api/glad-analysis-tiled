@@ -1,6 +1,6 @@
-import unittest
-import json
 import datetime
+import json
+import unittest
 
 from httmock import all_requests, HTTMock, response
 
@@ -62,7 +62,8 @@ class ParamsTest(unittest.TestCase):
         self.assertEqual(error_text, "End year can't be later than {}".format(today.year))
 
     def test_agg_values_not_boolean(self):
-        error_text = self.make_request('/api/v1/glad-alerts-athena?geostore=xxx&aggregate_values=maybe&aggregate_by=adm1')
+        error_text = self.make_request(
+            '/api/v1/glad-alerts-athena?geostore=xxx&aggregate_values=maybe&aggregate_by=adm1')
         self.assertEqual(error_text, 'aggregate_values parameter must be either true or false')
 
     def test_bad_agg_by(self):

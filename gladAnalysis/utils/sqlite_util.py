@@ -1,5 +1,4 @@
 import os
-import json
 import sqlite3
 
 from gladAnalysis.errors import Error
@@ -10,7 +9,6 @@ data_dir = os.path.join(root_dir, 'data')
 
 
 def insert_intersect_table(cursor, tile_dict):
-
     create_aoi_tiles_table(cursor)
 
     row_list = []
@@ -18,7 +16,6 @@ def insert_intersect_table(cursor, tile_dict):
     # tile_dict is a dict of {tile_obj: proportion_covered}
     # `tile` objects are from the mercantile library
     for tile, proportion_covered in tile_dict.iteritems():
-
         row = [tile.x, tile.y, tile.z, proportion_covered]
 
         # append to row list for batch insert later
@@ -83,7 +80,6 @@ def select_within_tiles(cursor, request):
 
 
 def connect(dbname=None):
-
     # useful for testing with our demo db
     sqlite_db = dbname if dbname else os.path.join(data_dir, 'stats.db')
 
@@ -97,9 +93,7 @@ def connect(dbname=None):
 
 
 def get_latest():
-
     conn, cursor = connect()
     cursor.execute('SELECT alert_date FROM latest')
 
     return cursor.fetchone()[0]
-
