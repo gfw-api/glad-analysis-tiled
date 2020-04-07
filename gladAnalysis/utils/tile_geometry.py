@@ -1,14 +1,12 @@
-import os
 from functools import partial
 
-from shapely.geometry import shape
-from shapely.ops import transform
 import mercantile
 import pyproj
+from shapely.geometry import shape
+from shapely.ops import transform
 
 
 def calc_area(geom, proj=None, init=None):
-
     proj_kwargs = {'lat1': geom.bounds[1],
                    'lat2': geom.bounds[3]}
 
@@ -32,7 +30,6 @@ def calc_area(geom, proj=None, init=None):
 
 
 def get_intersect_area(aoi, t):
-
     # grab the geometry of our tile of interest, then intersect it with our AOI
     tile_geom = shape(mercantile.feature(t)['geometry'])
     intersect_geom = aoi.intersection(tile_geom)
@@ -86,7 +83,6 @@ def process_tile(tile_list, aoi):
 
 
 def build_tile_dict(geom):
-
     # use bounds to find the smallest tile that completely contains our input aoi
     # not useful for AOIs that cross lat or lon 0 (returns tile [0, 0, 0])
     # but helpful for many AOIs
@@ -109,4 +105,3 @@ def build_tile_dict(geom):
         tile_dict[t] = intersect_area / 9572.547449763457
 
     return tile_dict
-

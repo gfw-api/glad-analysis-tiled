@@ -1,13 +1,13 @@
 import datetime
-import time
-import requests
-import shutil
 import logging
 import os
+import shutil
+import time
+
+import requests
 
 
 def download_file(url, output):
-
     r = requests.get(url, stream=True)
 
     with open(output, "wb") as f:
@@ -21,7 +21,6 @@ def download_file(url, output):
 
 
 def sync_db():
-
     logging.debug("Sync stats.db")
 
     url = "http://gfw2-data.s3.amazonaws.com/forest_change/umd_landsat_alerts/prod/db/stats.db"

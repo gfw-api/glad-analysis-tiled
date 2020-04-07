@@ -1,9 +1,3 @@
-import os
-import json
-import datetime
-from collections import Counter, defaultdict
-
-from shapely.geometry import shape
 from CTRegisterMicroserviceFlask import request_to_microservice
 
 from gladAnalysis.errors import Error
@@ -20,7 +14,6 @@ def route_constructor(iso_code, adm1_code=None, adm2_code=None):
 
 
 def query_microservice(uri):
-
     config_alerts = {
         'uri': uri,
         'method': 'GET'
@@ -60,4 +53,3 @@ def format_alerts_admin(request, glad_alerts):
             formatted_alerts.append(alerts_dict)
 
         return formatted_alerts
-

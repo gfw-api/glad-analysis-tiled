@@ -1,6 +1,6 @@
-import unittest
-import json
 import datetime
+import json
+import unittest
 
 from httmock import all_requests, HTTMock, response
 
@@ -19,7 +19,6 @@ class ParamsTest(unittest.TestCase):
         return json.loads(response.data)['errors'][0]['detail']
 
     def make_request(self, request):
-
         with HTTMock(geostore_mock):
             response = self.app.get(request, follow_redirects=True)
         error = self.deserialize_error(response)
@@ -63,7 +62,8 @@ class ParamsTest(unittest.TestCase):
         self.assertEqual(error_text, "End year can't be later than {}".format(today.year))
 
     def test_agg_values_not_boolean(self):
-        error_text = self.make_request('/api/v1/glad-alerts-athena?geostore=xxx&aggregate_values=maybe&aggregate_by=adm1')
+        error_text = self.make_request(
+            '/api/v1/glad-alerts-athena?geostore=xxx&aggregate_values=maybe&aggregate_by=adm1')
         self.assertEqual(error_text, 'aggregate_values parameter must be either true or false')
 
     def test_bad_agg_by(self):
@@ -91,7 +91,18 @@ def geostore_mock(url, request):
     # necessary because geostore validation happens before param validation
 
     headers = {'content-type': 'application/json'}
-    content = {"data":{"type":"geoStore","id":"8a3864a0eb61aa4830d99a3c416d9deb","attributes":{"geojson":{"features":[{"properties":{},"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-71.71875,-26.4312280645064],[-36.2109375,-26.4312280645064],[-36.2109375,2.81137119333114],[-71.71875,2.81137119333114],[-71.71875,-26.4312280645064]]]}}],"crs":{},"type":"FeatureCollection"},"hash":"8a3864a0eb61aa4830d99a3c416d9deb","provider":{},"areaHa":1245852113.7189505,"bbox":[-71.71875,-26.4312280645064,-36.2109375,2.81137119333114],"lock":False,"info":{"use":{}}}}}
+    content = {"data": {"type": "geoStore", "id": "8a3864a0eb61aa4830d99a3c416d9deb", "attributes": {"geojson": {
+        "features": [{"properties": {}, "type": "Feature", "geometry": {"type": "Polygon", "coordinates": [
+            [[-71.71875, -26.4312280645064], [-36.2109375, -26.4312280645064], [-36.2109375, 2.81137119333114],
+             [-71.71875, 2.81137119333114], [-71.71875, -26.4312280645064]]]}}], "crs": {},
+        "type": "FeatureCollection"}, "hash": "8a3864a0eb61aa4830d99a3c416d9deb", "provider": {},
+        "areaHa": 1245852113.7189505,
+        "bbox": [-71.71875,
+                 -26.4312280645064,
+                 -36.2109375,
+                 2.81137119333114],
+        "lock": False,
+        "info": {
+            "use": {}}}}}
 
     return response(200, content, headers, None, 5, request)
-

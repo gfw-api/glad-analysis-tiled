@@ -1,5 +1,8 @@
 # GLAD Analysis API Microservice Overview
 
+[![Build Status](https://travis-ci.org/gfw-api/glad-analysis-tiled.svg?branch=develop)](https://travis-ci.org/gfw-api/glad-analysis-tiled)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/55617d7d21d384ce68e6/test_coverage)](https://codeclimate.com/github/gfw-api/glad-analysis-tiled/test_coverage)
+
 Query the GLAD and forest loss datasets with the [Global Forest Watch (GFW)](http://globalforestwatch.org) API
 
 - Analyze datasets by a custom area of interest using the [GFW Geostore API](https://github.com/gfw-api/gfw-geostore-api) or by sending GeoJson in Post
@@ -13,7 +16,24 @@ Query the GLAD and forest loss datasets with the [Global Forest Watch (GFW)](htt
 ## API Endpoints
 For endpoint documentation, please visit our [API documentation page for GLAD](https://production-api.globalforestwatch.org/documentation/#/?tags=GLAD)
 
-# Getting Started
+## Dependencies
+
+You will need [Control Tower](https://github.com/control-tower/control-tower) up and running - either natively or with Docker. Refer to the project's README for information on how to set it up.
+
+The Dataset microservice is built using [Node.js](https://nodejs.org/en/), and can be executed either natively or using Docker, each of which has its own set of requirements.
+
+Native execution requires:
+- [Python 2.7](https://www.python.org/)
+
+Execution using Docker requires:
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+Dependencies on other Microservices:
+- [Geostore](https://github.com/gfw-api/gfw-geostore-api/)
+- [Fires Summary Stats](https://github.com/gfw-api/fires-summary-stats/)
+
+## Getting Started
 Perform the following steps:
 * [Install docker](https://docs.docker.com/engine/installation/)
 * [Install control tower](https://github.com/control-tower/control-tower)

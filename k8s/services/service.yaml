@@ -3,10 +3,10 @@ kind: Service
 metadata:
   namespace: gfw
   labels:
-    name: {name}
-  name: {name}
+    name: glad-analysis-athena
+  name: glad-analysis-athena
 spec:
   ports:
     - port: 5702
   selector:
-    name: {name}
+    name: glad-analysis-athena
