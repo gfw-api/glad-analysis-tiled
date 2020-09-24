@@ -34,9 +34,14 @@ def custom_download(geojson, geostore_id=None):
     req = requests.post(url, json={"geojson": geojson}, stream=True, params=request.args.to_dict())
 
     content_type = "text/csv" if request.args.get('format', 'json') == "csv" else "application/json"
+    response = Response(stream_with_context(req.iter_content(chunk_size=1024)), content_type=content_type)
+    
+    # Add content disposition header to trigger behavior of saving file with .csv extension
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+    content_disposition = "Content-Disposition: attachment; filename=\"glad_alerts.csv\"" if request.args.get('format', 'json') == "csv" else "Content-Disposition: inline"
+    response.headers['Content-Disposition'] = content_disposition
 
-    return Response(stream_with_context(req.iter_content(chunk_size=1024)),
-                    content_type=content_type)
+    return response
 
 
 @custom_geom_endpoints.errorhandler(Error)
