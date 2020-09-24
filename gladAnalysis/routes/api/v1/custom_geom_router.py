@@ -38,7 +38,7 @@ def custom_download(geojson, geostore_id=None):
     
     # Add content disposition header to trigger behavior of saving file with .csv extension
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
-    content_disposition = "Content-Disposition: attachment; filename=\"glad_alerts.csv\"" if request.args.get('format', 'json') == "csv" else "Content-Disposition: inline"
+    content_disposition = "attachment; filename=\"glad_alerts.csv\"" if request.args.get('format', 'json') == "csv" else "inline"
     response.headers['Content-Disposition'] = content_disposition
 
     return response
