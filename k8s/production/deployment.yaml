@@ -1,12 +1,22 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: gfw
   labels:
     name: glad-analysis-athena
   name: glad-analysis-athena
+  namespace: gfw
 spec:
+  progressDeadlineSeconds: 2147483647
+  replicas: 1
   revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      name: glad-analysis-athena
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -16,53 +26,58 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              - matchExpressions:
-                  - key: type
-                    operator: In
-                    values:
-                      - apps
+            - matchExpressions:
+              - key: type
+                operator: In
+                values:
+                - apps
       containers:
-      - name: glad-analysis-athena
+      - args:
+        - start
+        env:
+        - name: PORT
+          value: "5702"
+        - name: ENVIRONMENT
+          value: prod
+        - name: LOCAL_URL
+          value: http://glad-analysis-athena.gfw.svc.cluster.local:5702
+        - name: CT_URL
+          valueFrom:
+            secretKeyRef:
+              key: CT_URL
+              name: mssecrets
+        - name: CT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: CT_TOKEN
+              name: mssecrets
+        - name: CT_REGISTER_MODE
+          valueFrom:
+            secretKeyRef:
+              key: CT_REGISTER_MODE
+              name: mssecrets
+        - name: API_VERSION
+          valueFrom:
+            secretKeyRef:
+              key: API_VERSION
+              name: mssecrets
         image: vizzuality/glad-analysis-athena
         imagePullPolicy: Always
+        name: glad-analysis-athena
+        ports:
+        - containerPort: 5702
+          protocol: TCP
         resources:
-          requests:
-            cpu: "0.25"
-            memory: "256M"
           limits:
             cpu: "1"
-            memory: "512M"
-        args:
-          - start
-        env:
-          - name: PORT
-            value: "5702"
-          - name: ENVIRONMENT
-            value: prod
-          - name: LOCAL_URL
-            value: http://glad-analysis-athena.gfw.svc.cluster.local:5702
-          - name: CT_URL
-            valueFrom:
-                secretKeyRef:
-                  name: mssecrets
-                  key: CT_URL
-          - name: CT_TOKEN
-            valueFrom:
-                secretKeyRef:
-                  name: mssecrets
-                  key: CT_TOKEN
-          - name: CT_REGISTER_MODE
-            valueFrom:
-                secretKeyRef:
-                  name: mssecrets
-                  key: CT_REGISTER_MODE
-          - name: API_VERSION
-            valueFrom:
-                secretKeyRef:
-                  name: mssecrets
-                  key: API_VERSION
-
-        ports:
-          - containerPort: 5702
-
+            memory: 512M
+          requests:
+            cpu: 250m
+            memory: 256M
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
