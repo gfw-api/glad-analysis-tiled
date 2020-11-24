@@ -36,6 +36,10 @@ def format_alerts_admin(request, glad_alerts):
     # take the glad alerts format and strip out some attributes
     agg_by = request.args.get('aggregate_by', None)
 
+    for elem in glad_alerts['data']['attributes']['value']:
+        if 'alerts' not in elem:
+            raise Error('Inner API call returned no alerts.', 500)
+
     if len(glad_alerts['data']['attributes']['value']) == 1:
         return glad_alerts['data']['attributes']['value'][0]['alerts']
     else:

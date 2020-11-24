@@ -1,3 +1,7 @@
+## 23/11/2020
+
+- Fix issues when no alerts are returned by inner call to `glad-alerts/summary-stats` endpoint.
+
 # v1.0.0
 
 ## 09/04/2020
