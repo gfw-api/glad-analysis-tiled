@@ -1,3 +1,7 @@
+## 22/01/2021
+
+- Replace CT integration library
+
 ## 23/11/2020
 
 - Fix issues when no alerts are returned by inner call to `glad-alerts/summary-stats` endpoint.
