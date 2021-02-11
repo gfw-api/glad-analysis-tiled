@@ -61,7 +61,7 @@ spec:
             secretKeyRef:
               key: API_VERSION
               name: mssecrets
-        image: vizzuality/glad-analysis-athena
+        image: gfwdockerhub/glad-analysis-athena
         imagePullPolicy: Always
         name: glad-analysis-athena
         ports:
