@@ -1,6 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+<<<<<<< Updated upstream
+=======
+  creationTimestamp: null
+>>>>>>> Stashed changes
   labels:
     name: glad-analysis-athena
   name: glad-analysis-athena
@@ -19,6 +23,7 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      creationTimestamp: null
       labels:
         name: glad-analysis-athena
     spec:
@@ -71,7 +76,11 @@ spec:
             secretKeyRef:
               key: API_VERSION
               name: mssecrets
+<<<<<<< Updated upstream
         image: gfwdockerhub/glad-analysis-athena
+=======
+        image: vizzuality/glad-analysis-athena
+>>>>>>> Stashed changes
         imagePullPolicy: Always
         name: glad-analysis-athena
         ports:
@@ -87,9 +96,16 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
+<<<<<<< Updated upstream
       imagePullSecrets:
         - name: regcred
+=======
+>>>>>>> Stashed changes
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+<<<<<<< Updated upstream
+=======
+status: {}
+>>>>>>> Stashed changes
