@@ -1,10 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-<<<<<<< Updated upstream
-=======
-  creationTimestamp: null
->>>>>>> Stashed changes
   labels:
     name: glad-analysis-athena
   name: glad-analysis-athena
@@ -23,7 +19,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         name: glad-analysis-athena
     spec:
@@ -31,81 +26,70 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: type
-                operator: In
-                values:
-                - apps
+              - matchExpressions:
+                  - key: type
+                    operator: In
+                    values:
+                      - apps
       containers:
-      - args:
-        - start
-        env:
-        - name: PORT
-          value: "5702"
-        - name: ENVIRONMENT
-          value: staging
-        - name: LOCAL_URL
-          value: http://glad-analysis-athena.gfw.svc.cluster.local:5702
-        - name: CT_URL
-          valueFrom:
-            secretKeyRef:
-              key: CT_URL
-              name: mssecrets
-        - name: CT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              key: CT_TOKEN
-              name: mssecrets
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              key: GLAD_ANALYSIS_AWS_ACCESS_KEY_ID
-              name: mssecrets
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              key: GLAD_ANALYSIS_AWS_SECRET_ACCESS_KEY
-              name: mssecrets
-        - name: CT_REGISTER_MODE
-          valueFrom:
-            secretKeyRef:
-              key: CT_REGISTER_MODE
-              name: mssecrets
-        - name: API_VERSION
-          valueFrom:
-            secretKeyRef:
-              key: API_VERSION
-              name: mssecrets
-<<<<<<< Updated upstream
-        image: gfwdockerhub/glad-analysis-athena
-=======
-        image: vizzuality/glad-analysis-athena
->>>>>>> Stashed changes
-        imagePullPolicy: Always
-        name: glad-analysis-athena
-        ports:
-        - containerPort: 5702
-          protocol: TCP
-        resources:
-          limits:
-            cpu: "1"
-            memory: 512M
-          requests:
-            cpu: 250m
-            memory: 256M
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        - args:
+            - start
+          env:
+            - name: PORT
+              value: "5702"
+            - name: ENVIRONMENT
+              value: staging
+            - name: LOCAL_URL
+              value: http://glad-analysis-athena.gfw.svc.cluster.local:5702
+            - name: CT_URL
+              valueFrom:
+                secretKeyRef:
+                  key: CT_URL
+                  name: mssecrets
+            - name: CT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: CT_TOKEN
+                  name: mssecrets
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: GLAD_ANALYSIS_AWS_ACCESS_KEY_ID
+                  name: mssecrets
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: GLAD_ANALYSIS_AWS_SECRET_ACCESS_KEY
+                  name: mssecrets
+            - name: CT_REGISTER_MODE
+              valueFrom:
+                secretKeyRef:
+                  key: CT_REGISTER_MODE
+                  name: mssecrets
+            - name: API_VERSION
+              valueFrom:
+                secretKeyRef:
+                  key: API_VERSION
+                  name: mssecrets
+          image: gfwdockerhub/glad-analysis-athena
+          imagePullPolicy: Always
+          name: glad-analysis-athena
+          ports:
+            - containerPort: 5702
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512M
+            requests:
+              cpu: 250m
+              memory: 256M
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
-<<<<<<< Updated upstream
       imagePullSecrets:
         - name: regcred
-=======
->>>>>>> Stashed changes
       restartPolicy: Always
       schedulerName: default-scheduler
-      securityContext: {}
+      securityContext: { }
       terminationGracePeriodSeconds: 30
-<<<<<<< Updated upstream
-=======
-status: {}
->>>>>>> Stashed changes

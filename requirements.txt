@@ -1,5 +1,5 @@
 Flask==1.0.2
-RWAPIMicroservicePython==0.4.0
+RWAPIMicroservicePython==1.0.0
 requests==2.23.0
 httmock==1.2.6
 shapely==1.6.4
