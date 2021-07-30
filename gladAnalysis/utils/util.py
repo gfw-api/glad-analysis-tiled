@@ -19,10 +19,6 @@ def query_microservice(uri):
         'method': 'GET'
     }
 
-    if 'geostore' in uri:
-        config_alerts['uri'] = '/v2' + uri
-        config_alerts['ignore_version'] = True
-
     response = request_to_microservice(config_alerts)
 
     if response.get('errors'):

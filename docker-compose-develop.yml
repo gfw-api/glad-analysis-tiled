@@ -9,8 +9,6 @@ services:
       - dev.env
     environment:
       PORT: 5702
-      API_VERSION: v1
-      CT_REGISTER_MODE: auto
       DEBUG: "True"
     command: develop
     volumes:

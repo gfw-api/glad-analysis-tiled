@@ -26,13 +26,13 @@ def get_geojson(func):
             # we'll use the geostore to look up each of these geometries
             # so build the geostore URI accordingly
             if geostore_id:
-                geostore_uri = '/geostore/{}'.format(geostore_id)
+                geostore_uri = '/v2/geostore/{}'.format(geostore_id)
 
             # convert use_type & use_id into a geostore ID
             # important for serialization - that's how we'll build a download url
             elif use_type:
                 use_id = request.view_args.get('use_id')
-                geostore_uri = '/geostore/use/{}/{}'.format(use_type, use_id)
+                geostore_uri = '/v2/geostore/use/{}/{}'.format(use_type, use_id)
 
                 # no longer need use_id or use_type - have already converted
                 # these to a geostore_uri, which will then give us geojson
@@ -40,7 +40,7 @@ def get_geojson(func):
                 del kwargs['use_id'], kwargs['use_type']
 
             elif wdpa_id:
-                geostore_uri = '/geostore/wdpa/{}'.format(wdpa_id)
+                geostore_uri = '/v2/geostore/wdpa/{}'.format(wdpa_id)
                 del kwargs['wdpa_id']
 
             else:

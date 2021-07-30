@@ -62,7 +62,7 @@ def geostore_mock(url, request):
     return response(200, content, headers, None, 5, request)
 
 
-@urlmatch(path='/glad-alerts/summary-stats/admin/BRA')
+@urlmatch(path='/v1/glad-alerts/summary-stats/admin/BRA')
 def glad_summary_stats_no_alerts_mock(url, request):
     headers = {'content-type': 'application/json'}
     content = {"data": {"aggregate_admin": None, "aggregate_by": None, "aggregate_time": None, "aggregate_values": None,
@@ -78,7 +78,7 @@ def glad_summary_stats_no_alerts_mock(url, request):
     return response(200, content, headers, None, 5, request)
 
 
-@urlmatch(path='/glad-alerts/summary-stats/admin/BRA')
+@urlmatch(path='/v1/glad-alerts/summary-stats/admin/BRA')
 def glad_summary_stats_with_one_alert_mock(url, request):
     headers = {'content-type': 'application/json'}
     content = {"data": {"aggregate_admin": None, "aggregate_by": None, "aggregate_time": None, "aggregate_values": None,
@@ -95,7 +95,7 @@ def glad_summary_stats_with_one_alert_mock(url, request):
     return response(200, content, headers, None, 5, request)
 
 
-@urlmatch(path='/glad-alerts/summary-stats/admin/BRA')
+@urlmatch(path='/v1/glad-alerts/summary-stats/admin/BRA')
 def glad_summary_stats_with_many_alerts_mock(url, request):
     headers = {'content-type': 'application/json'}
     content = {"data": {"aggregate_admin": None, "aggregate_by": None, "aggregate_time": None, "aggregate_values": None,
@@ -121,7 +121,7 @@ def glad_summary_stats_with_many_alerts_mock(url, request):
     return response(200, content, headers, None, 5, request)
 
 
-@urlmatch(path='/glad-alerts/summary-stats/admin/BRA')
+@urlmatch(path='/v1/glad-alerts/summary-stats/admin/BRA')
 def glad_summary_stats_only_one_with_many_alerts_mock(url, request):
     headers = {'content-type': 'application/json'}
     content = {"data": {"aggregate_admin": None, "aggregate_by": None, "aggregate_time": None, "aggregate_values": None,
