@@ -8,7 +8,7 @@ case "$1" in
         ;;
     test)
         echo "Test"
-        exec python -m unittest -v gladAnalysis.tests
+        exec pytest
         ;;
     start)
         echo "Running Start"
