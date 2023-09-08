@@ -61,7 +61,7 @@ def grouped_and_to_rows(keys, vals, agg_type):
 
     final_list = []
 
-    for key, val in grouped.iteritems():
+    for key, val in grouped.items():
 
         if agg_type == 'year':
             row = {agg_type: key}

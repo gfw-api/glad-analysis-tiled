@@ -25,8 +25,9 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     if not adm1_code:
         area_uri += '?simplify=0.05'
 
-    glad_alerts = util.query_microservice(alerts_uri)
-    aoi_area_ha = util.query_microservice(area_uri)['data']['attributes']['areaHa']
+    glad_alerts = util.query_microservice(alerts_uri, request.headers.get('x-api-key'))
+    aoi_area_ha = util.query_microservice(
+        area_uri, request.headers.get('x-api-key'))['data']['attributes']['areaHa']
 
     # format glad alerts to be "count": 4, "week": 5, "year": 2017, etc
     formatted_glad = util.format_alerts_admin(request, glad_alerts)

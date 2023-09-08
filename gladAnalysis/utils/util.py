@@ -13,13 +13,8 @@ def route_constructor(iso_code, adm1_code=None, adm2_code=None):
     return route
 
 
-def query_microservice(uri):
-    config_alerts = {
-        'uri': uri,
-        'method': 'GET'
-    }
-
-    response = request_to_microservice(config_alerts)
+def query_microservice(uri, api_key):
+    response = request_to_microservice(uri=uri, method='GET', api_key=api_key)
 
     if response.get('errors'):
         raise Error(**response['errors'][0])
@@ -41,7 +36,6 @@ def format_alerts_admin(request, glad_alerts):
     else:
         formatted_alerts = []
         for d in glad_alerts['data']['attributes']['value']:
-
             alerts_dict = {}
             alerts_dict['count'] = d['alerts']
 

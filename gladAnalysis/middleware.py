@@ -3,7 +3,7 @@ from functools import wraps
 from flask import request
 
 from gladAnalysis.errors import Error
-from utils import util
+from .utils import util
 
 
 def get_geojson(func):
@@ -47,9 +47,9 @@ def get_geojson(func):
                 raise Error('Geostore or geojson must be set')
 
             # grab the geojson from the geostore
-            geostore_query = util.query_microservice(geostore_uri)
-            kwargs["geostore_id"] = geostore_query['data']['id']
-            geojson = geostore_query['data']['attributes']['geojson']
+            geostore_query = util.query_microservice(
+                geostore_uri, request.headers.get('x-api-key')
+            )
 
         # if it's a POST, we should find the geojson in the `geojson` property of the body
         elif request.method == 'POST':

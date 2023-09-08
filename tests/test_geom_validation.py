@@ -1,6 +1,7 @@
-import requests_mock
+import os
 
-from tests.mocks import mock_geostore
+import requests_mock
+from RWAPIMicroservicePython.test_utils import mock_request_validation
 
 
 root_path = "/api/v1/glad-alerts-athena"
@@ -8,17 +9,24 @@ root_path = "/api/v1/glad-alerts-athena"
 
 @requests_mock.Mocker(kw="mocker")
 def test_no_geojson(client, mocker):
-    mock_geostore(mocker)
-    response = client.post(root_path, json={"geojson": {}}, follow_redirects=True)
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
+    response = client.post(
+        root_path,
+        json={"geojson": {}},
+        follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
+    )
     assert response.json["errors"][0]["detail"] == "Geostore or geojson must be set"
 
 
 @requests_mock.Mocker(kw="mocker")
 def test_no_type(client, mocker):
-    mock_geostore(mocker)
-
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
     response = client.post(
-        root_path, json={"geojson": {"this": "ok"}}, follow_redirects=True
+        root_path,
+        json={"geojson": {"this": "ok"}},
+        follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
     )
     assert (
         response.json["errors"][0]["detail"]
@@ -28,11 +36,13 @@ def test_no_type(client, mocker):
 
 @requests_mock.Mocker(kw="mocker")
 def test_no_features(client, mocker):
-    mock_geostore(mocker)
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
+
     response = client.post(
         root_path,
         json={"geojson": {"type": "FeatureCollection"}},
         follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
     )
     assert (
         response.json["errors"][0]["detail"]
@@ -42,11 +52,13 @@ def test_no_features(client, mocker):
 
 @requests_mock.Mocker(kw="mocker")
 def test_too_many_features(client, mocker):
-    mock_geostore(mocker)
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
+
     response = client.post(
         root_path,
         json={"geojson": {"type": "FeatureCollection", "features": [1, 2]}},
         follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
     )
     assert (
         response.json["errors"][0]["detail"]
@@ -60,12 +72,13 @@ def test_no_coordinates(client, mocker):
         "type": "FeatureCollection",
         "features": [{"type": "Feature", "geometry": {"type": "polygon"}}],
     }
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
 
-    mock_geostore(mocker)
     response = client.post(
         root_path,
         json={"geojson": aoi},
         follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
     )
     assert (
         response.json["errors"][0]["detail"]
@@ -88,11 +101,13 @@ def test_line_geom(client, mocker):
             }
         ],
     }
-    mock_geostore(mocker)
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
+
     response = client.post(
         root_path,
         json={"geojson": aoi},
         follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
     )
     assert (
         response.json["errors"][0]["detail"]
@@ -110,12 +125,13 @@ def test_invalid_polygon(client, mocker):
             "coordinates": [[[-57, -17], [-57, -15], [-60, -15], [-60]]],
         },
     }
+    mock_request_validation(mocker, microservice_token=os.getenv("MICROSERVICE_TOKEN"))
 
-    mock_geostore(mocker)
     response = client.post(
         root_path,
         json={"geojson": aoi},
         follow_redirects=True,
+        headers={"x-api-key": "api-key-test"},
     )
     assert (
         response.json["errors"][0]["detail"]
