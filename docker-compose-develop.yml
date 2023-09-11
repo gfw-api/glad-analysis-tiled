@@ -10,6 +10,9 @@ services:
     environment:
       PORT: 5702
       DEBUG: "True"
+      AWS_REGION: "us-east-1"
+      REQUIRE_API_KEY: "True"
+      AWS_CLOUD_WATCH_LOGGING_ENABLED: "False"
     command: develop
     volumes:
       - ./gladAnalysis:/opt/gladAnalysis/gladAnalysis
