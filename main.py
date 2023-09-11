@@ -1,7 +1,7 @@
 """Main Script"""
 
 import os
-from gladAnalysis import app
+from gladAnalysis.app import app
 
 
 # This is only used when running locally. When running live, Gunicorn runs
