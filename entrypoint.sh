@@ -12,7 +12,7 @@ case "$1" in
         ;;
     start)
         echo "Running Start"
-        exec gunicorn -c gunicorn.py gladAnalysis:app
+        exec gunicorn -c gunicorn.py gladAnalysis.app:app
         ;;
     *)
         exec "$@"
