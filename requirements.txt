@@ -1,8 +1,7 @@
-Flask==1.0.2
-RWAPIMicroservicePython==1.0.0
+Flask==2.3.2
+RWAPIMicroservicePython==3.0.0
 requests==2.23.0
-httmock==1.2.6
-shapely==1.6.4
-mercantile==1.0.4
-pyproj==1.9.5.1
+shapely
+mercantile
+pyproj
 APScheduler==3.5.3

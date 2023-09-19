@@ -4,25 +4,17 @@ import unittest
 import mercantile
 from shapely.geometry import shape
 
-from gladAnalysis import app
 from gladAnalysis.utils.tile_geometry import build_tile_dict
 
 
 class TilingTest(unittest.TestCase):
-
-    def setUp(self):
-        app.testing = True
-        app.config['TESTING'] = True
-        app.config['DEBUG'] = False
-        self.app = app.test_client()
-
     def test_tile_geom(self):
         # load src geojson
-        with open('gladAnalysis/tests/fixtures/BRA_src.geojson') as src:
+        with open('tests/fixtures/BRA_src.geojson') as src:
             geojson = json.load(src)
 
         # load tiled output
-        with open('gladAnalysis/tests/fixtures/BRA_tiled.geojson') as src:
+        with open('tests/fixtures/BRA_tiled.geojson') as src:
             tiled_geojson = json.load(src)
 
         # grab actual geom
@@ -35,7 +27,7 @@ class TilingTest(unittest.TestCase):
         tile_dict = build_tile_dict(geom)
 
         # grab the shape of these tiles so we can visualize it
-        for t, pct_intersect in tile_dict.iteritems():
+        for t, pct_intersect in tile_dict.items():
             tile_geom = mercantile.feature(t)
             tile_geom['properties']['tile_coverage_fraction'] = pct_intersect
 

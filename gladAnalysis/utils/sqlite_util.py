@@ -15,7 +15,7 @@ def insert_intersect_table(cursor, tile_dict):
 
     # tile_dict is a dict of {tile_obj: proportion_covered}
     # `tile` objects are from the mercantile library
-    for tile, proportion_covered in tile_dict.iteritems():
+    for tile, proportion_covered in tile_dict.items():
         row = [tile.x, tile.y, tile.z, proportion_covered]
 
         # append to row list for batch insert later
