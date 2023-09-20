@@ -18,7 +18,7 @@ def glad_stats_iso(iso_code, adm1_code=None, adm2_code=None):
     query_params = params = request.args.to_dict()
     route = util.route_constructor(iso_code, adm1_code, adm2_code)
 
-    alerts_uri = '/v1/glad-alerts/summary-stats/admin/{}?{}'.format(route, urllib.urlencode(query_params))
+    alerts_uri = '/v1/glad-alerts/summary-stats/admin/{}?{}'.format(route, urllib.parse.urlencode(query_params))
     area_uri = '/v2/geostore/admin/{}'.format(route)
 
     # if it's just an iso, simplify the geostore because we only really want the area_ha
