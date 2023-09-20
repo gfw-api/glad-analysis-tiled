@@ -50,6 +50,7 @@ def get_geojson(func):
             geostore_query = util.query_microservice(
                 geostore_uri, request.headers.get('x-api-key')
             )
+            geojson = geostore_query['data']['attributes']['geojson']
 
         # if it's a POST, we should find the geojson in the `geojson` property of the body
         elif request.method == 'POST':
