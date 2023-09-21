@@ -49,16 +49,6 @@ spec:
                 secretKeyRef:
                   key: MICROSERVICE_TOKEN
                   name: mssecrets
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  key: GLAD_ANALYSIS_AWS_ACCESS_KEY_ID
-                  name: mssecrets
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: GLAD_ANALYSIS_AWS_SECRET_ACCESS_KEY
-                  name: mssecrets
             - name: AWS_REGION
               valueFrom:
                 secretKeyRef:
