@@ -7,8 +7,8 @@ from shapely.ops import transform
 
 
 def calc_area(geom, proj=None, init=None):
-    proj_kwargs = {'lat1': geom.bounds[1],
-                   'lat2': geom.bounds[3]}
+    proj_kwargs = {'lat_1': geom.bounds[1],
+                   'lat_2': geom.bounds[3]}
 
     if proj:
         proj_kwargs['proj'] = proj
